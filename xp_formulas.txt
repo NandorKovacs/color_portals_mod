@@ -1,0 +1,15 @@
+normal_dist_cost = (x/160)^2
+base_cost = 5;
+
+
+Overworld: 	dim_cost = 0
+		dist_cost = normal_dist_cost(x)
+
+Nether: dim_cost = 20
+	dist_cost = normal_dist_cost(x * 8)
+
+End: 	dim_cost = 50 + dist_cost(1024)
+	
+	dist_cost = normal_dist_cost(x - 1024)
+
+

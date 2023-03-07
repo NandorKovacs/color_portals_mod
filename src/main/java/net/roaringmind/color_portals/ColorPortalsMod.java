@@ -9,6 +9,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.roaringmind.color_portals.block.ColorPortalBaseBlock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class ColorPortalsMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
   // block which is needed to activate the portal
-  public static final Block COLOR_PORTAL_BASE = new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(50.0f, 1200.0f));
+  public static final Block COLOR_PORTAL_BASE = new ColorPortalBaseBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(50.0f, 1200.0f));
   
   public static final Identifier COLOR_PORTAL_BASE_ID = new Identifier(MODID, "color_portal_base");
 
