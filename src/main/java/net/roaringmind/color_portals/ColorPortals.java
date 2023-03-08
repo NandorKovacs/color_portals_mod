@@ -1,13 +1,14 @@
 package net.roaringmind.color_portals;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -18,9 +19,6 @@ import net.minecraft.util.Identifier;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
 import net.roaringmind.color_portals.screen.ColorPortalScreenHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ColorPortals implements ModInitializer {
   public static String MODID = "color_portals";
