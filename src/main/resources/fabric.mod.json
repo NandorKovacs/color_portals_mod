@@ -19,7 +19,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.roaringmind.color_portals.ColorPortalsMod"
+      "net.roaringmind.color_portals.ColorPortals"
+    ], 
+    "client": [
+      "net.roaringmind.color_portals.client.ClientColorPortals"
     ]
   },
   "mixins": [
