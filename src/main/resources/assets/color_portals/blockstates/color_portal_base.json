@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "color_portals:block/color_portal_base",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "color_portals:block/color_portal_base",
+      "x": 90,
+      "y": 90
+    },
+    "facing=south": {
+      "model": "color_portals:block/color_portal_base",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "color_portals:block/color_portal_base",
+      "x": 90,
+      "y": 270
+    }
+  }
+}
