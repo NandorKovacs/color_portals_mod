@@ -59,7 +59,7 @@ public class ColorPortalBase extends BlockWithEntity {
     return ActionResult.SUCCESS;
   }
 
-  // copied from barrel block
+  // copied from horizontal facing block
   @Override
   public BlockState rotate(BlockState state, BlockRotation rotation) {
       return (BlockState)state.with(FACING, rotation.rotate(state.get(FACING)));
