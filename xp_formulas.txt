@@ -13,3 +13,6 @@ End: 	dim_cost = 50 + dist_cost(1024)
 	dist_cost = normal_dist_cost(x - 1024)
 
 
+Overall formula for portal a and portal b:
+
+base_cost + dim_cost_a + dim_cost_b + dist_cost
