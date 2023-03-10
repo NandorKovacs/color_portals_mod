@@ -6,18 +6,21 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.roaringmind.color_portals.ColorPortals;
 import net.roaringmind.color_portals.screen.ColorPortalActivationScreenHandler;
 
-public class ColorPortalScreen extends HandledScreen<ColorPortalActivationScreenHandler>{
-  public ColorPortalScreen(ColorPortalActivationScreenHandler handler, PlayerInventory inventory, Text title) {
+public class ColorPortalActivationScreen extends HandledScreen<ColorPortalActivationScreenHandler>{
+
+  public ColorPortalActivationScreen(ColorPortalActivationScreenHandler handler, PlayerInventory inventory, Text title) {
     super(handler, inventory, title);
   }
 
   // A path to the gui texture. In this example we use the texture from the
   // dispenser
-  private static final Identifier TEXTURE = new Identifier("minecraft", "textures/gui/container/dispenser.png");
+  private static final Identifier TEXTURE = new Identifier(ColorPortals.MODID, "textures/gui/container/color_portal_activation.png");;
 
   @Override
   protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
@@ -27,6 +30,11 @@ public class ColorPortalScreen extends HandledScreen<ColorPortalActivationScreen
     int x = (width - backgroundWidth) / 2;
     int y = (height - backgroundHeight) / 2;
     drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
+  
+    Slot slot = this.handler.getSlot();
+    if (!slot.hasStack()) {
+      this.drawTexture(matrices, x + slot.x, y + slot.y, this.backgroundWidth, 0, 16, 16);
+    }
   }
 
   @Override

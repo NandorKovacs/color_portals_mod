@@ -20,10 +20,10 @@ import net.minecraft.util.Identifier;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.ColorPortalBlock;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
-import net.roaringmind.color_portals.screen.ColorPortalScreenHandler;
+import net.roaringmind.color_portals.screen.ColorPortalActivationScreenHandler;
 
 public class ColorPortals implements ModInitializer {
-  public static String MODID = "color_portals";
+  public static final String MODID = "color_portals";
 
   // This logger is used to write text to the console and the log file.
   // It is considered best practice to use your mod id as the logger's name.
@@ -35,7 +35,7 @@ public class ColorPortals implements ModInitializer {
   public static final Block COLOR_PORTAL_BASE;
   public static final Item COLOR_PORTAL_BASE_ITEM;
   public static final BlockEntityType<ColorPortalBaseEntity> COLOR_PORTAL_BASE_ENTITY;
-  public static final ScreenHandlerType<ColorPortalScreenHandler> COLOR_PORTAL_SCREEN_HANDLER;
+  public static final ScreenHandlerType<ColorPortalActivationScreenHandler> COLOR_PORTAL_SCREEN_HANDLER;
 
   public static final Identifier COLOR_PORTAL_BLOCK_ID;
   public static final Block COLOR_PORTAL_BLOCK;
@@ -59,8 +59,7 @@ public class ColorPortals implements ModInitializer {
 
     // register screen handler
     COLOR_PORTAL_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, COLOR_PORTAL_BASE_ID,
-        new ScreenHandlerType<ColorPortalScreenHandler>(ColorPortalScreenHandler::new));
-
+        new ScreenHandlerType<ColorPortalActivationScreenHandler>(ColorPortalActivationScreenHandler::new));
   }
 
   @Override
