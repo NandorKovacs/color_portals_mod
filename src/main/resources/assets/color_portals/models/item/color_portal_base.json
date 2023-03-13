@@ -1,4 +1,3 @@
 {
-  "parent": "color_portals:block/color_portal_base_closed",
-  "x": 90
+  "parent": "color_portals:block/color_portal_base_closed"
 }
