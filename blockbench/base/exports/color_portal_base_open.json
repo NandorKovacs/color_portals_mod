@@ -1,10 +1,11 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "color_portals:block/color_portal_base/color_portal_base_frame",
-		"6": "color_portals:block/color_portal_base/open/light_cubes",
-		"7": "color_portals:block/color_portal_base/open/dark_cubes",
-		"particle": "color_portals:block/color_portal_base/open/transparent_white"
+		"1": "blockbench:color_portal/base/chiseled_polished_blackstone_frame",
+		"5": "base:transparent_white",
+		"6": "base:light_cubes",
+		"7": "base:dark_cubes",
+		"particle": "base:transparent_white"
 	},
 	"elements": [
 		{
@@ -1382,6 +1383,18 @@
 				"up": {"uv": [0, 0, 1, 10], "rotation": 270, "texture": "#7"},
 				"down": {"uv": [0, 0, 1, 10], "rotation": 270, "texture": "#7"}
 			}
+		},
+		{
+			"from": [3, 3, 3],
+			"to": [13, 13, 13],
+			"faces": {
+				"north": {"uv": [0, 0, 10, 10], "texture": "#5"},
+				"east": {"uv": [0, 0, 10, 10], "texture": "#5"},
+				"south": {"uv": [0, 0, 10, 10], "texture": "#5"},
+				"west": {"uv": [0, 0, 10, 10], "texture": "#5"},
+				"up": {"uv": [0, 0, 10, 10], "texture": "#5"},
+				"down": {"uv": [0, 0, 10, 10], "texture": "#5"}
+			}
 		}
 	],
 	"groups": [
@@ -1535,7 +1548,7 @@
 							"children": [
 								{
 									"name": "light_face",
-									"origin": [8, 8, 8], 
+									"origin": [8, 8, 8],
 									"color": 0,
 									"children": [98, 99, 100, 101, 102, 103, 104, 105]
 								},
@@ -1548,7 +1561,8 @@
 							]
 						}
 					]
-				}
+				},
+				116
 			]
 		}
 	]
