@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.roaringmind.color_portals.ColorPortals;
@@ -20,7 +21,8 @@ public class ColorPortalBaseEntity extends BlockEntity implements NamedScreenHan
 
   @Override
   public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-    return new ColorPortalActivationScreenHandler(syncId, playerInventory, new SimpleInventory(1));
+    return new ColorPortalActivationScreenHandler(syncId, playerInventory, new SimpleInventory(1),
+        ScreenHandlerContext.create(this.world, this.pos));
   }
 
   @Override

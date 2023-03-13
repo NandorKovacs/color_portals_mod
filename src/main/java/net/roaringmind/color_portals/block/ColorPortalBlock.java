@@ -63,4 +63,8 @@ public class ColorPortalBlock extends Block {
       builder.add(AXIS);
   }
   // }
+
+  public BlockState getStateWithRotation(Direction.Axis axis) {
+    return this.getDefaultState().with(AXIS, axis);
+  }
 }

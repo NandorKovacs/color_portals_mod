@@ -38,7 +38,7 @@ public class ColorPortals implements ModInitializer {
   public static final ScreenHandlerType<ColorPortalActivationScreenHandler> COLOR_PORTAL_SCREEN_HANDLER;
 
   public static final Identifier COLOR_PORTAL_BLOCK_ID;
-  public static final Block COLOR_PORTAL_BLOCK;
+  public static final ColorPortalBlock COLOR_PORTAL_BLOCK;
 
   static {
     // register base
