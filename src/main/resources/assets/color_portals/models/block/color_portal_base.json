@@ -1,7 +1,0 @@
-{
-  "parent": "block/cube_column_horizontal",
-  "textures": {
-    "end": "color_portals:block/color_portal_base",
-    "side": "color_portals:block/color_portal_base_top"
-  }
-}
