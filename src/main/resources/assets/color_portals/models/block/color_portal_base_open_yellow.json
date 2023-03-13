@@ -1,0 +1,6 @@
+{
+  "parent": "color_portals:block/color_portal_base_open",
+  "textures": {
+    "1": "color_portals:block/color_portal_base/color_portal_base_frame_yellow"
+  }
+}

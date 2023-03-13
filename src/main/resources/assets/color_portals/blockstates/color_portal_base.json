@@ -1,21 +1,325 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=north,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=magenta": {
       "model": "color_portals:block/color_portal_base_open_magenta",
       "x": 90
     },
-    "facing=east": {
+    "facing=north,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black",
+      "x": 90
+    },
+    "facing=north,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed",
+      "x": 90
+    },
+    "facing=east,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=magenta": {
       "model": "color_portals:block/color_portal_base_open_magenta",
       "x": 90,
       "y": 90
     },
-    "facing=south": {
+    "facing=east,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed",
+      "x": 90,
+      "y": 90
+    },
+    "facing=south,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=magenta": {
       "model": "color_portals:block/color_portal_base_open_magenta",
       "x": 90,
       "y": 180
     },
-    "facing=west": {
+    "facing=south,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=magenta": {
       "model": "color_portals:block/color_portal_base_open_magenta",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed",
       "x": 90,
       "y": 270
     }
