@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -23,7 +25,7 @@ import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
 import net.roaringmind.color_portals.screen.ColorPortalScreenHandler;
 
 public class ColorPortals implements ModInitializer {
-  public static String MODID = "color_portals";
+  public static final String MODID = "color_portals";
 
   // This logger is used to write text to the console and the log file.
   // It is considered best practice to use your mod id as the logger's name.
@@ -40,7 +42,13 @@ public class ColorPortals implements ModInitializer {
   public static final Identifier COLOR_PORTAL_BLOCK_ID;
   public static final Block COLOR_PORTAL_BLOCK;
 
+  public static final Identifier DRAGON_EYE_ID;
+  public static final Item DRAGON_EYE;
+  
+  private static final Identifier ENDER_DRAGON_LOOT_TABLE_ID;
+
   static {
+    
     // register base
     COLOR_PORTAL_BASE_ID = new Identifier(MODID, "color_portal_base");
     COLOR_PORTAL_BASE = Registry.register(Registries.BLOCK, COLOR_PORTAL_BASE_ID,
@@ -61,6 +69,15 @@ public class ColorPortals implements ModInitializer {
     COLOR_PORTAL_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, COLOR_PORTAL_BASE_ID,
         new ScreenHandlerType<ColorPortalScreenHandler>(ColorPortalScreenHandler::new));
 
+    // register item
+    DRAGON_EYE_ID = new Identifier(MODID, "dragon_eye");
+    DRAGON_EYE = Registry.register(Registries.ITEM, DRAGON_EYE_ID, new Item(new FabricItemSettings()));
+   
+    // make ender dragon drop DragonEye
+    ENDER_DRAGON_LOOT_TABLE_ID = 
+    LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source)) -> {
+
+    }
   }
 
   @Override
