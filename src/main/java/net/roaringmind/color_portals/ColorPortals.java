@@ -44,7 +44,8 @@ public class ColorPortals implements ModInitializer {
     // register base
     COLOR_PORTAL_BASE_ID = new Identifier(MODID, "color_portal_base");
     COLOR_PORTAL_BASE = Registry.register(Registries.BLOCK, COLOR_PORTAL_BASE_ID,
-        new ColorPortalBase(FabricBlockSettings.of(Material.METAL).requiresTool().strength(50.0f, 1200.0f)));
+        new ColorPortalBase(
+            FabricBlockSettings.of(Material.METAL).requiresTool().strength(50.0f, 1200.0f).nonOpaque()));
     COLOR_PORTAL_BASE_ITEM = Registry.register(Registries.ITEM, COLOR_PORTAL_BASE_ID,
         new BlockItem(COLOR_PORTAL_BASE, new FabricItemSettings()));
     COLOR_PORTAL_BASE_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, COLOR_PORTAL_BASE_ID,
