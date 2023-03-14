@@ -69,7 +69,7 @@ public class ColorPortal {
     for (BlockPos block_pos : portalBlocks) {
       world.setBlockState(block_pos,
           ColorPortals.COLOR_PORTAL_BLOCK.getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
-      ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setPortal(portal.getId());
+      ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortal(portal.getId());
     }
     ((ColorPortalBaseEntity) e).setPortal(portal.getId());
     
