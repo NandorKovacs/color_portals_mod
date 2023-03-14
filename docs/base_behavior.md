@@ -8,7 +8,7 @@ Has slot for color option, maybe some description of functionality, check to sta
 
 Insert dye → consumed →  Block tries to generate Portal with appropriate Color:
 
-```none
+```
 blocks will be treaded as nodes, and each block has edges to all of its non diagonal neighbors. the base is considered to be the root, so that we have clear ranks
 do a rank restricted breadth first search in the correct (depends on placement of the base) plane.
   if rank > ranklimit || current block != base or border block or air:

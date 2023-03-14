@@ -11,6 +11,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
@@ -21,13 +22,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
+import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortalBase extends BlockWithEntity {
   public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+  public static final EnumProperty<BaseColor> COLOR = EnumProperty.of("color_portal_base_color", BaseColor.class);
 
   public ColorPortalBase(AbstractBlock.Settings settings) {
     super(settings);
-    this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+    this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(COLOR, BaseColor.NONE));
   }
 
   @Override
@@ -62,17 +65,17 @@ public class ColorPortalBase extends BlockWithEntity {
   // copied from horizontal facing block
   @Override
   public BlockState rotate(BlockState state, BlockRotation rotation) {
-      return (BlockState)state.with(FACING, rotation.rotate(state.get(FACING)));
+    return (BlockState) state.with(FACING, rotation.rotate(state.get(FACING)));
   }
 
   @Override
   public BlockState mirror(BlockState state, BlockMirror mirror) {
-      return state.rotate(mirror.getRotation(state.get(FACING)));
+    return state.rotate(mirror.getRotation(state.get(FACING)));
   }
 
   @Override
   protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-    builder.add(FACING);
+    builder.add(FACING, COLOR);
   }
 
   @Override
