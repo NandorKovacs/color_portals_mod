@@ -2,7 +2,9 @@ package net.roaringmind.color_portals.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
@@ -10,10 +12,12 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 
-public class ColorPortalBlock extends Block {
+public class ColorPortalBlock extends BlockWithEntity {
 
   public ColorPortalBlock(Settings settings) {
     super(settings);
@@ -26,10 +30,8 @@ public class ColorPortalBlock extends Block {
 
   @Override
   public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-    switch (state.get(AXIS)) {
-      case Z: {
-        return Z_SHAPE;
-      }
+    if (state.get(AXIS) == Axis.Z) {
+      return Z_SHAPE;
     }
     return X_SHAPE;
   }
@@ -41,30 +43,29 @@ public class ColorPortalBlock extends Block {
 
   @Override
   public BlockState rotate(BlockState state, BlockRotation rotation) {
-    switch (rotation) {
-      case COUNTERCLOCKWISE_90:
-      case CLOCKWISE_90: {
-        switch (state.get(AXIS)) {
-          case X: {
-            return (BlockState) state.with(AXIS, Direction.Axis.Z);
-          }
-          case Z: {
-            return (BlockState) state.with(AXIS, Direction.Axis.X);
-          }
-        }
-        return state;
+    if (rotation == BlockRotation.COUNTERCLOCKWISE_90 || rotation == BlockRotation.CLOCKWISE_90) {
+      if (state.get(AXIS) == Axis.X) {
+        return (BlockState) state.with(AXIS, Direction.Axis.Z);
       }
+      if (state.get(AXIS) == Axis.Z) {
+        return (BlockState) state.with(AXIS, Direction.Axis.X);
+      }
+      return state;
     }
     return state;
   }
 
   @Override
   protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-      builder.add(AXIS);
+    builder.add(AXIS);
   }
-  // }
-
+  
   public BlockState getStateWithRotation(Direction.Axis axis) {
     return this.getDefaultState().with(AXIS, axis);
+  }
+
+  @Override
+  public BlockEntity createBlockEntity(BlockPos var1, BlockState var2) {
+    return new ColorPortalBlockEntity(var1, var2);
   }
 }

@@ -20,6 +20,7 @@ import net.minecraft.util.Identifier;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.ColorPortalBlock;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
+import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 import net.roaringmind.color_portals.screen.ColorPortalActivationScreenHandler;
 
 public class ColorPortals implements ModInitializer {
@@ -39,6 +40,7 @@ public class ColorPortals implements ModInitializer {
 
   public static final Identifier COLOR_PORTAL_BLOCK_ID;
   public static final ColorPortalBlock COLOR_PORTAL_BLOCK;
+  public static final BlockEntityType<ColorPortalBlockEntity> COLOR_PORTAL_BLOCK_ENTITY;
 
   static {
     // register base
@@ -52,11 +54,12 @@ public class ColorPortals implements ModInitializer {
         FabricBlockEntityTypeBuilder.create(ColorPortalBaseEntity::new, COLOR_PORTAL_BASE).build(null));
 
     // register portal block
-
     COLOR_PORTAL_BLOCK_ID = new Identifier(MODID, "color_portal_block");
     COLOR_PORTAL_BLOCK = Registry.register(Registries.BLOCK, COLOR_PORTAL_BLOCK_ID,
         new ColorPortalBlock(FabricBlockSettings.of(Material.PORTAL).noCollision().strength(-1.0f)
             .sounds(BlockSoundGroup.GLASS).luminance(state -> 11)));
+    COLOR_PORTAL_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, COLOR_PORTAL_BLOCK_ID,
+        FabricBlockEntityTypeBuilder.create(ColorPortalBlockEntity::new, COLOR_PORTAL_BLOCK).build(null));
 
     // register screen handler
     COLOR_PORTAL_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, COLOR_PORTAL_BASE_ID,

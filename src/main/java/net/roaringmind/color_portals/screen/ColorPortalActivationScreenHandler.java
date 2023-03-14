@@ -14,8 +14,8 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
+import net.roaringmind.color_portals.ColorPortal;
 import net.roaringmind.color_portals.ColorPortals;
-import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortalActivationScreenHandler extends ScreenHandler {
@@ -81,7 +81,7 @@ public class ColorPortalActivationScreenHandler extends ScreenHandler {
         player.dropItem(stack, false);
       }
       this.context.run((world, pos) -> {
-        if (!ColorPortalBase.createPortal(world, pos, BaseColor.byDyeItem((DyeItem) stack.getItem()))) {
+        if (!ColorPortal.createColorPortal(world, pos, BaseColor.byDyeItem((DyeItem) stack.getItem()))) {
           player.sendMessage(MutableText.of(Text.of("Portal frame incomplete").getContent())
               .setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.RED))), true);
           player.dropItem(stack, false);

@@ -1,15 +1,10 @@
 package net.roaringmind.color_portals.block;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -25,9 +20,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.world.World;
-import net.roaringmind.color_portals.ColorPortals;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
 import net.roaringmind.color_portals.block.enums.BaseColor;
 
@@ -94,102 +87,5 @@ public class ColorPortalBase extends BlockWithEntity {
     BlockState state = world.getBlockState(pos);
     state = state.with(COLOR, color);
     world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
-  }
-
-  private static boolean isBorderBlock(Block block) {
-    return block == Blocks.OBSIDIAN;
-  }
-
-  private static BlockPos getBlockPosAtRelativeXY(int x, int y, BlockPos pos, Direction.Axis axis) {
-    switch (axis) {
-      case Z:
-        return new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ());
-      case X:
-        return new BlockPos(pos.getX(), pos.getY() + y, pos.getZ() + x);
-      default:
-        ColorPortals.LOGGER.warn("couldn't get block pos at relative xy " + x + " " + y + " with origin "
-            + pos.toShortString() + ": axis equals Y");
-        return null;
-    }
-  }
-
-  private static Boolean dfs(boolean[][] visited, List<BlockPos> fillable_blocks, int x, int y, World world,
-      BlockPos pos, Direction direction) {
-    if (x > 10 || x < -10 || y > 10 || y < -10) {
-      return false;
-    }
-    if (visited[x + 11][y + 11]) {
-      return true;
-    }
-    visited[x + 11][y + 11] = true;
-
-    BlockPos new_pos = getBlockPosAtRelativeXY(x, y, pos, direction.getAxis());
-    Block block = world.getBlockState(new_pos).getBlock();
-
-    if (isBorderBlock(block)) {
-      return true;
-    }
-
-    if (!(block instanceof AirBlock)) {
-      return false;
-    }
-
-    int[][] neighbors = {
-        { x - 1, y },
-        { x + 1, y },
-        { x, y + 1 },
-        { x, y - 1 }
-    };
-
-    for (var neighbor : neighbors) {
-      if (!dfs(visited, fillable_blocks, neighbor[0], neighbor[1], world, pos, direction)) {
-        return false;
-      }
-    }
-
-    fillable_blocks.add(new_pos);
-    return true;
-  }
-
-  public static Boolean setPortalBlocks(World world, BlockPos pos) {
-    boolean[][] visited = new boolean[21][21];
-    List<BlockPos> fillable_blocks = new ArrayList<>();
-
-    int x = 0;
-    int y = 0;
-    visited[x + 11][x + 11] = true;
-
-    int[][] neighbors = {
-        { x - 1, y },
-        { x + 1, y },
-        { x, y + 1 },
-        { x, y - 1 }
-    };
-
-    Direction direction = world.getBlockState(pos).get(FACING);
-
-    boolean is_possible = false;
-    for (int[] neighbor : neighbors) {
-      if (dfs(visited, fillable_blocks, neighbor[0], neighbor[1], world, pos, direction)) {
-        is_possible = true;
-      }
-    }
-
-    if (is_possible) {
-      for (BlockPos block_pos : fillable_blocks) {
-        world.setBlockState(block_pos,
-            ColorPortals.COLOR_PORTAL_BLOCK.getStateWithRotation(direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
-      }
-      return true;
-    }
-    return false;
-  }
-
-  public static boolean createPortal(World world, BlockPos pos, BaseColor color) {
-    if (setPortalBlocks(world, pos)) {
-      setColor(world, pos, color);
-      return true;
-    }
-    return false;
   }
 }
