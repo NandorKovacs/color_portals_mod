@@ -1,5 +1,7 @@
 package net.roaringmind.color_portals;
 
+import javax.swing.text.html.parser.Entity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,13 +11,19 @@ import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
@@ -44,11 +52,12 @@ public class ColorPortals implements ModInitializer {
 
   public static final Identifier DRAGON_EYE_ID;
   public static final Item DRAGON_EYE;
-  
+
   private static final Identifier ENDER_DRAGON_LOOT_TABLE_ID;
 
+
   static {
-    
+
     // register base
     COLOR_PORTAL_BASE_ID = new Identifier(MODID, "color_portal_base");
     COLOR_PORTAL_BASE = Registry.register(Registries.BLOCK, COLOR_PORTAL_BASE_ID,
@@ -72,12 +81,18 @@ public class ColorPortals implements ModInitializer {
     // register item
     DRAGON_EYE_ID = new Identifier(MODID, "dragon_eye");
     DRAGON_EYE = Registry.register(Registries.ITEM, DRAGON_EYE_ID, new Item(new FabricItemSettings()));
-   
-    // make ender dragon drop DragonEye
-    ENDER_DRAGON_LOOT_TABLE_ID = 
-    LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source)) -> {
 
-    }
+    // make ender dragon drop DragonEye
+    ENDER_DRAGON_LOOT_TABLE_ID = EntityType.ENDER_DRAGON.getLootTableId();
+    LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
+      if (source.isBuiltin() && ENDER_DRAGON_LOOT_TABLE_ID.equals(id)) {
+        LootPool.Builder poolBuilder = LootPool.builder()
+          .with(ItemEntry.builder(DRAGON_EYE));
+
+        tableBuilder.pool(poolBuilder);
+
+      }
+    });
   }
 
   @Override
