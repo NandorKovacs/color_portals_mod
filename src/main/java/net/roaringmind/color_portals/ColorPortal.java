@@ -2,7 +2,6 @@ package net.roaringmind.color_portals;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -16,20 +15,26 @@ import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
 import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 import net.roaringmind.color_portals.block.enums.BaseColor;
-import oshi.util.tuples.Pair;
 
 public class ColorPortal {
-  private class ColorPortalRegistry {
-    ColorPortal[] list = new ColorPortal[32];
+  private static ColorPortalRegistry portalRegistry = new ColorPortalRegistry();
+  private int id;
+  private BlockPos origin;
+  private BaseColor color;
+  private long age;
+  
 
-    public void addPortal() {
-
-    }
-    public ColorPortal getById(int id) {
-
-    }
+  private ColorPortal(BlockPos origin, BaseColor color, long age) {
+    this.origin = origin;
+    this.age = age;
+    this.color = color;
+    
+    this.id = portalRegistry.addPortal(this);
   }
-  private static ColorPortalRegistry portalRegistry;
+
+  public BaseColor getColor() {
+    return color;
+  }
 
   public static ColorPortal getById(int id) {
     if (id == -1) {
@@ -38,11 +43,14 @@ public class ColorPortal {
     return portalRegistry.getById(id);
   }
 
-  private ColorPortal() {
-
+  public long getAge() {
+    return this.age;
   }
 
-
+  public void destroy() {
+    // inform portal registry
+    //
+  }
 
   public static boolean createColorPortal(World world, BlockPos pos, BaseColor color) {
     BlockEntity e = world.getBlockEntity(pos);
@@ -56,16 +64,21 @@ public class ColorPortal {
       return false;
     }
 
+    ColorPortal portal = new ColorPortal(pos, color, world.getTime());
+
     for (BlockPos block_pos : portalBlocks) {
-      world.setBlockState(block_pos, ColorPortals.COLOR_PORTAL_BLOCK.getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
-      ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setPortal(portals.size());
+      world.setBlockState(block_pos,
+          ColorPortals.COLOR_PORTAL_BLOCK.getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
+      ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setPortal(portal.getId());
     }
-
-    ((ColorPortalBaseEntity) e).setPortal(portals.size());
-    portals.add(new ColorPortal());
-
+    ((ColorPortalBaseEntity) e).setPortal(portal.getId());
+    
     ColorPortalBase.setColor(world, pos, color);
     return true;
+  }
+
+  private int getId() {
+    return id;
   }
 
   private static List<BlockPos> getPortalBlocks(World world, BlockPos pos, Direction direction) {
