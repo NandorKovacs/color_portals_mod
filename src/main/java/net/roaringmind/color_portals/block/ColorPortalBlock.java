@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.roaringmind.color_portals.ColorPortal;
 import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 
 public class ColorPortalBlock extends BlockWithEntity {
@@ -65,7 +69,7 @@ public class ColorPortalBlock extends BlockWithEntity {
   protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
     builder.add(AXIS);
   }
-  
+
   public BlockState getStateWithRotation(Direction.Axis axis) {
     return this.getDefaultState().with(AXIS, axis);
   }
@@ -73,5 +77,30 @@ public class ColorPortalBlock extends BlockWithEntity {
   @Override
   public BlockEntity createBlockEntity(BlockPos var1, BlockState var2) {
     return new ColorPortalBlockEntity(var1, var2);
+  }
+
+  @Override
+  public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
+      WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    boolean correct_axis = !(direction.getAxis() != state.get(AXIS) && direction.getAxis().isHorizontal());
+
+    if (!correct_axis || neighborState.isOf(this)) {
+      return state;
+    }
+
+    ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
+    if (portal != null) {
+      portal.destroy();
+    }
+
+    return Blocks.AIR.getDefaultState();
+  }
+
+  @Override
+  public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+    ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
+    if (portal != null) {
+      portal.destroy();
+    }
   }
 }

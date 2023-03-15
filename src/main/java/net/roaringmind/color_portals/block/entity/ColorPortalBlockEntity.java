@@ -17,6 +17,10 @@ public class ColorPortalBlockEntity extends BlockEntity {
     this.portal_id = portal;
   }
 
+  public int getPortal() {
+    return portal_id;
+  }
+
   @Override
   public void writeNbt(NbtCompound nbt) {
     nbt.putInt("color_portals_portal", portal_id);

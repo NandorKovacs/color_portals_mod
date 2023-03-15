@@ -13,6 +13,10 @@ public class ColorPortalRegistry {
     }
   }
 
+  public void removePortal(int id) {
+    list[id] = null;
+  }
+
   public int addPortal(ColorPortal portal) {
     int color_id = portal.getColor().getId();
 

@@ -22,13 +22,14 @@ public class ColorPortal {
   private BlockPos origin;
   private BaseColor color;
   private long age;
-  
+  private World world;
 
-  private ColorPortal(BlockPos origin, BaseColor color, long age) {
+  private ColorPortal(BlockPos origin, World world, BaseColor color) {
     this.origin = origin;
-    this.age = age;
+    this.age = world.getTime();
     this.color = color;
-    
+    this.world = world;
+
     this.id = portalRegistry.addPortal(this);
   }
 
@@ -48,8 +49,13 @@ public class ColorPortal {
   }
 
   public void destroy() {
-    // inform portal registry
-    //
+    portalRegistry.removePortal(this.id);
+
+    if (world.getBlockState(origin).isOf(ColorPortals.COLOR_PORTAL_BASE)) {
+      world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE));
+    }
+
+    ColorPortals.LOGGER.info("destroyed portal with origin " + origin.toShortString());
   }
 
   public static boolean createColorPortal(World world, BlockPos pos, BaseColor color) {
@@ -60,11 +66,12 @@ public class ColorPortal {
     }
     Direction base_direction = world.getBlockState(pos).get(ColorPortalBase.FACING);
     List<BlockPos> portalBlocks = getPortalBlocks(world, pos, base_direction);
-    if (portalBlocks == null) {
+    if (portalBlocks == null || portalBlocks.size() == 0) {
       return false;
     }
+    ColorPortalBase.setColor(world, pos, color);
 
-    ColorPortal portal = new ColorPortal(pos, color, world.getTime());
+    ColorPortal portal = new ColorPortal(pos, world, color);
 
     for (BlockPos block_pos : portalBlocks) {
       world.setBlockState(block_pos,
@@ -72,8 +79,6 @@ public class ColorPortal {
       ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortal(portal.getId());
     }
     ((ColorPortalBaseEntity) e).setPortal(portal.getId());
-    
-    ColorPortalBase.setColor(world, pos, color);
     return true;
   }
 
@@ -82,12 +87,12 @@ public class ColorPortal {
   }
 
   private static List<BlockPos> getPortalBlocks(World world, BlockPos pos, Direction direction) {
-    boolean[][] visited = new boolean[21][21];
-    List<BlockPos> fillable_blocks = new ArrayList<>();
+    boolean[][] visited = new boolean[23][23];
+    List<BlockPos>[] fillable_blocks = new List[4];
 
     int x = 0;
     int y = 0;
-    visited[x + 11][x + 11] = true;
+    visited[x + 12][x + 12] = true;
 
     int[][] neighbors = {
         { x - 1, y },
@@ -96,17 +101,17 @@ public class ColorPortal {
         { x, y - 1 }
     };
 
-    boolean is_possible = false;
-    for (int[] neighbor : neighbors) {
-      if (dfs(visited, fillable_blocks, neighbor[0], neighbor[1], world, pos, direction)) {
-        is_possible = true;
+    List<BlockPos> res = new ArrayList<>();
+    for (int i = 0; i < 4; ++i) {
+      visited = new boolean[23][23];
+      visited[x + 12][x + 12] = true;
+      fillable_blocks[i] = new ArrayList<>();
+      if (dfs(visited, fillable_blocks[i], neighbors[i][0], neighbors[i][1], world, pos, direction)) {
+        res.addAll(fillable_blocks[i]);
       }
     }
 
-    if (is_possible) {
-      return fillable_blocks;
-    }
-    return null;
+    return res;
   }
 
   private static Boolean dfs(boolean[][] visited, List<BlockPos> fillable_blocks, int x, int y, World world,
@@ -114,10 +119,10 @@ public class ColorPortal {
     if (x > 10 || x < -10 || y > 10 || y < -10) {
       return false;
     }
-    if (visited[x + 11][y + 11]) {
+    if (visited[x + 12][y + 12]) {
       return true;
     }
-    visited[x + 11][y + 11] = true;
+    visited[x + 12][y + 12] = true;
 
     BlockPos new_pos = getBlockPosAtRelativeXY(x, y, pos, direction.getAxis());
     Block block = world.getBlockState(new_pos).getBlock();
