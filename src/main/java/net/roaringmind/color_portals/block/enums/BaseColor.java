@@ -1,6 +1,10 @@
 package net.roaringmind.color_portals.block.enums;
 
+import java.util.function.IntFunction;
+
+import net.minecraft.item.DyeItem;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.function.ValueLists;
 
 public enum BaseColor implements StringIdentifiable {
   WHITE(0, "white"),
@@ -19,8 +23,9 @@ public enum BaseColor implements StringIdentifiable {
   GREEN(13, "green"),
   RED(14, "red"),
   BLACK(15, "black"),
-  NONE(-1, "none");
+  NONE(16, "none");
 
+  private static final IntFunction<BaseColor> BY_ID;
   private final int id;
   private final String name;
 
@@ -29,8 +34,24 @@ public enum BaseColor implements StringIdentifiable {
     this.name = name;
   }
 
+  public int getId() {
+    return this.id;
+  }
+
+  public static BaseColor byId(int id) {
+    return BY_ID.apply(id);
+  }
+
   @Override
   public String asString() {
-      return this.name;
+    return this.name;
+  }
+
+  public static BaseColor byDyeItem(DyeItem item) {
+    return byId(item.getColor().getId());
+  }
+
+  static {
+    BY_ID = ValueLists.createIdToValueFunction(BaseColor::getId, BaseColor.values(), ValueLists.OutOfBoundsHandling.ZERO);
   }
 }

@@ -1,22 +1,258 @@
 {
   "variants": {
-    "facing=north": {
-      "model": "color_portals:block/color_portal_base_open_magenta",
-      "x": 90
+    "facing=north,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white"
     },
-    "facing=east": {
-      "model": "color_portals:block/color_portal_base_open_magenta",
-      "x": 90,
+    "facing=north,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange"
+    },
+    "facing=north,color_portal_base_color=magenta": {
+      "model": "color_portals:block/color_portal_base_open_magenta"
+    },
+    "facing=north,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue"
+    },
+    "facing=north,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow"
+    },
+    "facing=north,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime"
+    },
+    "facing=north,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink"
+    },
+    "facing=north,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray"
+    },
+    "facing=north,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray"
+    },
+    "facing=north,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan"
+    },
+    "facing=north,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple"
+    },
+    "facing=north,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue"
+    },
+    "facing=north,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown"
+    },
+    "facing=north,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green"
+    },
+    "facing=north,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red"
+    },
+    "facing=north,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black"
+    },
+    "facing=north,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed"
+    },
+    "facing=east,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white",
       "y": 90
     },
-    "facing=south": {
+    "facing=east,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=magenta": {
       "model": "color_portals:block/color_portal_base_open_magenta",
-      "x": 90,
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black",
+      "y": 90
+    },
+    "facing=east,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed",
+      "y": 90
+    },
+    "facing=south,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white",
       "y": 180
     },
-    "facing=west": {
+    "facing=south,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=magenta": {
       "model": "color_portals:block/color_portal_base_open_magenta",
-      "x": 90,
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black",
+      "y": 180
+    },
+    "facing=south,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed",
+      "y": 180
+    },
+    "facing=west,color_portal_base_color=white": {
+      "model": "color_portals:block/color_portal_base_open_white",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=orange": {
+      "model": "color_portals:block/color_portal_base_open_orange",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=magenta": {
+      "model": "color_portals:block/color_portal_base_open_magenta",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=light_blue": {
+      "model": "color_portals:block/color_portal_base_open_light_blue",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=yellow": {
+      "model": "color_portals:block/color_portal_base_open_yellow",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=lime": {
+      "model": "color_portals:block/color_portal_base_open_lime",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=pink": {
+      "model": "color_portals:block/color_portal_base_open_pink",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=gray": {
+      "model": "color_portals:block/color_portal_base_open_gray",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=light_gray": {
+      "model": "color_portals:block/color_portal_base_open_light_gray",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=cyan": {
+      "model": "color_portals:block/color_portal_base_open_cyan",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=purple": {
+      "model": "color_portals:block/color_portal_base_open_purple",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=blue": {
+      "model": "color_portals:block/color_portal_base_open_blue",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=brown": {
+      "model": "color_portals:block/color_portal_base_open_brown",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=green": {
+      "model": "color_portals:block/color_portal_base_open_green",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=red": {
+      "model": "color_portals:block/color_portal_base_open_red",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=black": {
+      "model": "color_portals:block/color_portal_base_open_black",
+      "y": 270
+    },
+    "facing=west,color_portal_base_color=none": {
+      "model": "color_portals:block/color_portal_base_closed",
       "y": 270
     }
   }

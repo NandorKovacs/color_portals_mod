@@ -82,4 +82,10 @@ public class ColorPortalBase extends BlockWithEntity {
   public BlockState getPlacementState(ItemPlacementContext ctx) {
     return this.getDefaultState().with(FACING, ctx.getPlayerFacing());
   }
+
+  public static void setColor(World world, BlockPos pos, BaseColor color) {
+    BlockState state = world.getBlockState(pos);
+    state = state.with(COLOR, color);
+    world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
+  }
 }

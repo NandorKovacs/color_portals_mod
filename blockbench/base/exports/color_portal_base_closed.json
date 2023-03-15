@@ -4,7 +4,7 @@
 		"1": "color_portals:block/color_portal_base/color_portal_base_frame",
 		"2": "color_portals:block/color_portal_base/closed/closed_window_front",
 		"3": "color_portals:block/color_portal_base/closed/closed_window_side",
-		"particle": "color_portals:block/color_portal_base/transparent_white"
+		"particle": "color_portals:block/color_portal_base/open/transparent_white"
 	},
 	"elements": [
 		{

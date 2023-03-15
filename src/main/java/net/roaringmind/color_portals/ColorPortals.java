@@ -30,6 +30,7 @@ import net.minecraft.util.Identifier;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.ColorPortalBlock;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
+import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 import net.roaringmind.color_portals.screen.ColorPortalActivationScreenHandler;
 
 public class ColorPortals implements ModInitializer {
@@ -48,7 +49,8 @@ public class ColorPortals implements ModInitializer {
   public static final ScreenHandlerType<ColorPortalActivationScreenHandler> COLOR_PORTAL_SCREEN_HANDLER;
 
   public static final Identifier COLOR_PORTAL_BLOCK_ID;
-  public static final Block COLOR_PORTAL_BLOCK;
+  public static final ColorPortalBlock COLOR_PORTAL_BLOCK;
+  public static final BlockEntityType<ColorPortalBlockEntity> COLOR_PORTAL_BLOCK_ENTITY;
 
   public static final Identifier DRAGON_EYE_ID;
   public static final Item DRAGON_EYE;
@@ -61,18 +63,20 @@ public class ColorPortals implements ModInitializer {
     // register base
     COLOR_PORTAL_BASE_ID = new Identifier(MODID, "color_portal_base");
     COLOR_PORTAL_BASE = Registry.register(Registries.BLOCK, COLOR_PORTAL_BASE_ID,
-        new ColorPortalBase(FabricBlockSettings.of(Material.METAL).requiresTool().strength(50.0f, 1200.0f)));
+        new ColorPortalBase(
+            FabricBlockSettings.of(Material.METAL).requiresTool().strength(50.0f, 1200.0f).nonOpaque()));
     COLOR_PORTAL_BASE_ITEM = Registry.register(Registries.ITEM, COLOR_PORTAL_BASE_ID,
         new BlockItem(COLOR_PORTAL_BASE, new FabricItemSettings()));
     COLOR_PORTAL_BASE_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, COLOR_PORTAL_BASE_ID,
         FabricBlockEntityTypeBuilder.create(ColorPortalBaseEntity::new, COLOR_PORTAL_BASE).build(null));
 
     // register portal block
-
     COLOR_PORTAL_BLOCK_ID = new Identifier(MODID, "color_portal_block");
     COLOR_PORTAL_BLOCK = Registry.register(Registries.BLOCK, COLOR_PORTAL_BLOCK_ID,
         new ColorPortalBlock(FabricBlockSettings.of(Material.PORTAL).noCollision().strength(-1.0f)
             .sounds(BlockSoundGroup.GLASS).luminance(state -> 11)));
+    COLOR_PORTAL_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, COLOR_PORTAL_BLOCK_ID,
+        FabricBlockEntityTypeBuilder.create(ColorPortalBlockEntity::new, COLOR_PORTAL_BLOCK).build(null));
 
     // register screen handler
     COLOR_PORTAL_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, COLOR_PORTAL_BASE_ID,
