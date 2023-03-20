@@ -12,7 +12,9 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.roaringmind.color_portals.ColorPortals;
+import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.screen.ColorPortalActivationScreenHandler;
+import net.roaringmind.color_portals.screen.ColorPortalLinkingScreenHandler;
 
 public class ColorPortalBaseEntity extends BlockEntity implements NamedScreenHandlerFactory {
   private int portal_id = -1;
@@ -23,8 +25,12 @@ public class ColorPortalBaseEntity extends BlockEntity implements NamedScreenHan
 
   @Override
   public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-    return new ColorPortalActivationScreenHandler(syncId, playerInventory, new SimpleInventory(1),
+    if (this.world.getBlockState(this.pos).get(ColorPortalBase.COLOR).getId() > 15) {
+      return new ColorPortalActivationScreenHandler(syncId, playerInventory, new SimpleInventory(1),
         ScreenHandlerContext.create(this.world, this.pos));
+    }
+
+    return new ColorPortalLinkingScreenHandler(syncId, playerInventory);
   }
 
   @Override

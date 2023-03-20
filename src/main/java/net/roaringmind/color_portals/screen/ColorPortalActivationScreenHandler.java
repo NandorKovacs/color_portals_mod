@@ -39,7 +39,7 @@ public class ColorPortalActivationScreenHandler extends ScreenHandler {
   // then be synced to the client.
   public ColorPortalActivationScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory,
       ScreenHandlerContext context) {
-    super(ColorPortals.COLOR_PORTAL_SCREEN_HANDLER, syncId);
+    super(ColorPortals.COLOR_PORTAL_ACTIVATION_SCREEN_HANDLER, syncId);
     this.context = context;
 
     checkSize(inventory, 1);
