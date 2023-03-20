@@ -9,11 +9,11 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.roaringmind.color_portals.ColorPortals;
-import net.roaringmind.color_portals.screen.ColorPortalActivationScreenHandler;
+import net.roaringmind.color_portals.screen.ColorPortalLinkingScreenHandler;
 
-public class ColorPortalLinkingScreen extends HandledScreen<ColorPortalActivationScreenHandler> {
+public class ColorPortalLinkingScreen extends HandledScreen<ColorPortalLinkingScreenHandler> {
 
-  public ColorPortalLinkingScreen(ColorPortalActivationScreenHandler handler, PlayerInventory inventory, Text title) {
+  public ColorPortalLinkingScreen(ColorPortalLinkingScreenHandler handler, PlayerInventory inventory, Text title) {
     super(handler, inventory, title);
   }
 
@@ -47,8 +47,19 @@ public class ColorPortalLinkingScreen extends HandledScreen<ColorPortalActivatio
   @Override
   protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
     super.drawForeground(matrices, mouseX, mouseY);
-    
-    int textX = (backgroundWidth - textRenderer.getWidth("Link")) / 2;
-    this.textRenderer.draw(matrices, "Link", textX, 54, 0);
+    int cost = ((ColorPortalLinkingScreenHandler) this.handler).getCost();    
+
+    String text = "Link";
+    int textX = (backgroundWidth - textRenderer.getWidth(text)) / 2;
+    int color = 0;
+    this.textRenderer.draw(matrices, text, textX, 54, color);
+
+    text = "cost: " + String.valueOf(cost);
+    textX = (backgroundWidth - textRenderer.getWidth(text)) / 2;
+    color = 0xFF6060;
+    if (this.client.player.experienceLevel >= cost) {
+      color = 8453920;
+    }
+    this.textRenderer.drawWithShadow(matrices, text, textX, 34, color);
   }
 }

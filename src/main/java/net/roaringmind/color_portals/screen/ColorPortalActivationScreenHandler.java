@@ -6,6 +6,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
@@ -28,7 +29,7 @@ public class ColorPortalActivationScreenHandler extends ScreenHandler {
   // The client will call the other constructor with an empty Inventory and the
   // screenHandler will automatically
   // sync this empty inventory with the inventory on the server.
-  public ColorPortalActivationScreenHandler(int syncId, PlayerInventory playerInventory) {
+  public ColorPortalActivationScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
     this(syncId, playerInventory, new SimpleInventory(1), ScreenHandlerContext.EMPTY);
   }
 

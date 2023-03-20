@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
@@ -95,9 +96,9 @@ public class ColorPortals implements ModInitializer {
 
     // register screen handler
     COLOR_PORTAL_ACTIVATION_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, ACTIVATION_SCREEN_HANDLER_ID,
-        new ScreenHandlerType<ColorPortalActivationScreenHandler>(ColorPortalActivationScreenHandler::new));
+        new ExtendedScreenHandlerType<ColorPortalActivationScreenHandler>(ColorPortalActivationScreenHandler::new));
     COLOR_PORTAL_LINKING_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, LINKING_SCREEN_HANDLER_ID,
-        new ScreenHandlerType<ColorPortalLinkingScreenHandler>(ColorPortalLinkingScreenHandler::new));
+        new ExtendedScreenHandlerType<ColorPortalLinkingScreenHandler>(ColorPortalLinkingScreenHandler::new));
 
     // register item
     DRAGON_EYE = Registry.register(Registries.ITEM, DRAGON_EYE_ID, new Item(new FabricItemSettings()));
