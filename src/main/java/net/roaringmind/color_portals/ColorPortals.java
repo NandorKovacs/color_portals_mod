@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -22,6 +23,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.ColorPortalBlock;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
@@ -40,11 +42,10 @@ public class ColorPortals implements ModInitializer {
 
   public static final Identifier COLOR_PORTAL_BASE_ID;
   public static final Identifier COLOR_PORTAL_BLOCK_ID;
-  
+
   public static final Identifier ACTIVATION_SCREEN_HANDLER_ID;
   public static final Identifier LINKING_SCREEN_HANDLER_ID;
-  
-  
+
   public static final Identifier DRAGON_EYE_ID;
   public static final Identifier ENDER_DRAGON_LOOT_TABLE_ID;
 
@@ -116,8 +117,17 @@ public class ColorPortals implements ModInitializer {
     });
   }
 
+  public static ColorPortalRegistry portalRegistry = new ColorPortalRegistry();
+
   @Override
   public void onInitialize() {
     LOGGER.info("Initializing!");
+
+    ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+      portalRegistry = server.getWorld(World.OVERWORLD).getPersistentStateManager()
+          .getOrCreate(ColorPortalRegistry::createFromNbt, ColorPortalRegistry::new, MODID);
+    });
+    
+    portalRegistry.markDirty();
   }
 }

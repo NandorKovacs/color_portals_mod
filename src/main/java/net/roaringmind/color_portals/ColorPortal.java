@@ -9,6 +9,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
@@ -21,7 +22,6 @@ import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortal {
-  private static ColorPortalRegistry portalRegistry = new ColorPortalRegistry();
   private int id;
   private BlockPos origin;
   private BaseColor color;
@@ -33,7 +33,7 @@ public class ColorPortal {
     this.age = world.getTime();
     this.color = color;
     dimension = world.getDimensionKey().getValue();
-    this.id = portalRegistry.addPortal(this, world);
+    this.id = ColorPortals.portalRegistry.addPortal(this, world);
   }
 
   public static boolean createColorPortal(World world, BlockPos pos, BaseColor color) {
@@ -68,7 +68,7 @@ public class ColorPortal {
     if (id == -1) {
       return null;
     }
-    return portalRegistry.getById(id);
+    return ColorPortals.portalRegistry.getById(id);
   }
 
   public long getAge() {
@@ -76,18 +76,19 @@ public class ColorPortal {
   }
 
   public void destroy(WorldAccess world) {
-    portalRegistry.removePortal(this.id);
+    ColorPortals.portalRegistry.removePortal(this.id);
 
     if (world.getBlockState(origin).isOf(ColorPortals.COLOR_PORTAL_BASE)) {
-      world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE), Block.NOTIFY_ALL);
+      world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE),
+          Block.NOTIFY_ALL);
     }
 
     ColorPortals.LOGGER.info("destroyed portal with origin " + origin.toShortString());
   }
 
   public static int getCost(int id) {
-    ColorPortal a = getById(id);
-    ColorPortal b = getById(id - id % 2);
+    Pair<ColorPortal, ColorPortal> portal_pair = ColorPortals.portalRegistry.getByColor(id);
+    ColorPortal a = portal_pair.getLeft(), b = portal_pair.getRight();
 
     if (a == null || b == null) {
       return -1;

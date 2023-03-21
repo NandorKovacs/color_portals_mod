@@ -4,7 +4,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Pair;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
-import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortalRegistry extends PersistentState {
   ColorPortal[] list;
@@ -17,10 +16,12 @@ public class ColorPortalRegistry extends PersistentState {
   }
 
   public void removePortal(int id) {
+    markDirty();
     list[id] = null;
   }
 
   public int addPortal(ColorPortal portal, World world) {
+    markDirty();
     int color_id = portal.getColor().getId();
 
     if (color_id > 15) {
@@ -51,8 +52,8 @@ public class ColorPortalRegistry extends PersistentState {
     return list[id];
   }
 
-  public Pair<ColorPortal, ColorPortal> getByColor(BaseColor color) {
-    int color_id = color.getId();
+  public Pair<ColorPortal, ColorPortal> getByColor(int id) {
+    int color_id = id - id % 2;
     if (color_id > 15) {
       return null;
     }
