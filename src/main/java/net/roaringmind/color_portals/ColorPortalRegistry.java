@@ -1,22 +1,40 @@
 package net.roaringmind.color_portals;
 
+import java.util.UUID;
+
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
 public class ColorPortalRegistry extends PersistentState {
-  ColorPortal[] list;
+  private ColorPortal[] list;
+  private Boolean[] links;
 
   public ColorPortalRegistry() {
     list = new ColorPortal[32];
+    links = new Boolean[16];
     for (int i = 0; i < 32; ++i) {
       list[i] = null;
+      if (i >= 16) {
+        continue;
+      }
+      links[i] = false;
     }
   }
 
   public void removePortal(int id) {
     markDirty();
     list[id] = null;
+    links[(id - id % 2) / 2] = false;
+  }
+
+  public void linkPortal(int id, UUID uuid) {
+    if (list[id - id % 2] == null || list[id - id % 2 + 1] == null) {
+      return;
+    }
+
+    links[(id - id % 2) / 2] = true;
+    markDirty();
   }
 
   public int addPortal(ColorPortal portal, World world) {
@@ -53,9 +71,15 @@ public class ColorPortalRegistry extends PersistentState {
 
   public static ColorPortalRegistry createFromNbt(NbtCompound tag) {
     NbtCompound compound = tag.getCompound(ColorPortals.MODID);
+    NbtCompound portals = compound.getCompound("portals");
+    NbtCompound linkCompound = compound.getCompound("links");
+
     ColorPortalRegistry res = new ColorPortalRegistry();
     for (int i = 0; i < 32; ++i) {
-      res.list[i] = ColorPortal.createFromNbt(compound.getCompound(String.valueOf(i)));
+      res.list[i] = ColorPortal.createFromNbt(portals.getCompound(String.valueOf(i)));
+    }
+    for (int i = 0; i < 16; ++i) {
+      res.links[i] = linkCompound.getBoolean(String.valueOf(i));
     }
     return res;
   }
@@ -63,15 +87,23 @@ public class ColorPortalRegistry extends PersistentState {
   @Override
   public NbtCompound writeNbt(NbtCompound var1) {
     NbtCompound compound = new NbtCompound();
+    NbtCompound portals = new NbtCompound();
     for (int i = 0; i < 32; ++i) {
       NbtCompound portal_compound = new NbtCompound();
       if (list[i] != null) {
         portal_compound = list[i].writeNbt();
       }
 
-      compound.put(String.valueOf(i), portal_compound);
+      portals.put(String.valueOf(i), portal_compound);
     }
 
+    NbtCompound linkCompound = new NbtCompound();
+    for (int i = 0; i < 16; ++i) {
+      linkCompound.putBoolean(String.valueOf(i), links[i]);
+    }
+
+    compound.put("portals", portals);
+    compound.put("links", linkCompound);
     var1.put(ColorPortals.MODID, compound);
     return var1;
   }
