@@ -13,6 +13,7 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.roaringmind.color_portals.ColorPortal;
 import net.roaringmind.color_portals.ColorPortals;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.screen.ColorPortalActivationScreenHandler;
@@ -60,6 +61,6 @@ public class ColorPortalBaseEntity extends BlockEntity implements ExtendedScreen
 
   @Override
   public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-    buf.writeInt(7);
+    buf.writeInt(ColorPortal.getCost(portal_id));
   }
 }

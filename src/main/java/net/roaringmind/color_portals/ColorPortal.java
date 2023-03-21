@@ -7,10 +7,13 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.dimension.DimensionTypes;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
 import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
@@ -31,6 +34,30 @@ public class ColorPortal {
     this.world = world;
 
     this.id = portalRegistry.addPortal(this);
+  }
+
+  public static boolean createColorPortal(World world, BlockPos pos, BaseColor color) {
+    BlockEntity e = world.getBlockEntity(pos);
+    if (!(e instanceof ColorPortalBaseEntity)) {
+      ColorPortals.LOGGER.warn("blockentity in create portal not instance of ColorPortalBaseEntity");
+      return false;
+    }
+    Direction base_direction = world.getBlockState(pos).get(ColorPortalBase.FACING);
+    List<BlockPos> portalBlocks = getPortalBlocks(world, pos, base_direction);
+    if (portalBlocks == null || portalBlocks.size() == 0) {
+      return false;
+    }
+    ColorPortalBase.setColor(world, pos, color);
+
+    ColorPortal portal = new ColorPortal(pos, world, color);
+
+    for (BlockPos block_pos : portalBlocks) {
+      world.setBlockState(block_pos,
+          ColorPortals.COLOR_PORTAL_BLOCK.getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
+      ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortal(portal.getId());
+    }
+    ((ColorPortalBaseEntity) e).setPortal(portal.getId());
+    return true;
   }
 
   public BaseColor getColor() {
@@ -58,28 +85,52 @@ public class ColorPortal {
     ColorPortals.LOGGER.info("destroyed portal with origin " + origin.toShortString());
   }
 
-  public static boolean createColorPortal(World world, BlockPos pos, BaseColor color) {
-    BlockEntity e = world.getBlockEntity(pos);
-    if (!(e instanceof ColorPortalBaseEntity)) {
-      ColorPortals.LOGGER.warn("blockentity in create portal not instance of ColorPortalBaseEntity");
-      return false;
-    }
-    Direction base_direction = world.getBlockState(pos).get(ColorPortalBase.FACING);
-    List<BlockPos> portalBlocks = getPortalBlocks(world, pos, base_direction);
-    if (portalBlocks == null || portalBlocks.size() == 0) {
-      return false;
-    }
-    ColorPortalBase.setColor(world, pos, color);
+  public static int getCost(int id) {
+    ColorPortal a = getById(id);
+    ColorPortal b = getById(id - id % 2);
 
-    ColorPortal portal = new ColorPortal(pos, world, color);
-
-    for (BlockPos block_pos : portalBlocks) {
-      world.setBlockState(block_pos,
-          ColorPortals.COLOR_PORTAL_BLOCK.getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
-      ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortal(portal.getId());
+    if (a == null || b == null) {
+      return -1;
     }
-    ((ColorPortalBaseEntity) e).setPortal(portal.getId());
-    return true;
+
+    double dist = getEuclideanHorizontalDistance(a.origin, b.origin);
+
+    int base_cost = 5;
+    double dim_cost_a = a.getDimCost();
+    double dim_cost_b = b.getDimCost();
+    double dist_cost = Math.max(a.getDistCost(dist), b.getDistCost(dist));
+
+    return (int) (base_cost + dim_cost_a + dim_cost_b + dist_cost);
+  }
+
+  private double getDistCost(double dist) {
+    int multiplicator = 1;
+    if (world.getDimensionKey() == DimensionTypes.THE_NETHER) {
+      multiplicator = 8;
+    }
+
+    return ((dist * multiplicator) / 160) * ((dist * multiplicator) / 160);
+  }
+
+  private double getDimCost() {
+    RegistryKey<DimensionType> type = world.getDimensionKey();
+    if (type == DimensionTypes.OVERWORLD) {
+      return 0;
+    }
+    if (type == DimensionTypes.THE_NETHER) {
+      return 20;
+    }
+
+    if (type == DimensionTypes.THE_END) {
+      return 50 + getDistCost(1024);
+    }
+    return -1;
+  }
+
+  private static double getEuclideanHorizontalDistance(BlockPos a, BlockPos b) {
+    int x = Math.abs(a.getX() - b.getX()), y = Math.abs(a.getY() - b.getY());
+
+    return Math.sqrt(x * x + y + y);
   }
 
   private int getId() {
