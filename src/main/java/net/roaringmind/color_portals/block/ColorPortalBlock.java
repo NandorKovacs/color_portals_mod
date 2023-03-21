@@ -90,7 +90,7 @@ public class ColorPortalBlock extends BlockWithEntity {
 
     ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
     if (portal != null) {
-      portal.destroy();
+      portal.destroy(world);
     }
 
     return Blocks.AIR.getDefaultState();
@@ -100,7 +100,7 @@ public class ColorPortalBlock extends BlockWithEntity {
   public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
     ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
     if (portal != null) {
-      portal.destroy();
+      portal.destroy(world);
     }
   }
 }

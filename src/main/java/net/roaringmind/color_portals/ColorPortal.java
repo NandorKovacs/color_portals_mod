@@ -7,12 +7,13 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.dimension.DimensionTypes;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
@@ -25,15 +26,14 @@ public class ColorPortal {
   private BlockPos origin;
   private BaseColor color;
   private long age;
-  private World world;
+  private Identifier dimension;
 
   private ColorPortal(BlockPos origin, World world, BaseColor color) {
     this.origin = origin;
     this.age = world.getTime();
     this.color = color;
-    this.world = world;
-
-    this.id = portalRegistry.addPortal(this);
+    dimension = world.getDimensionKey().getValue();
+    this.id = portalRegistry.addPortal(this, world);
   }
 
   public static boolean createColorPortal(World world, BlockPos pos, BaseColor color) {
@@ -75,11 +75,11 @@ public class ColorPortal {
     return this.age;
   }
 
-  public void destroy() {
+  public void destroy(WorldAccess world) {
     portalRegistry.removePortal(this.id);
 
     if (world.getBlockState(origin).isOf(ColorPortals.COLOR_PORTAL_BASE)) {
-      world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE));
+      world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE), Block.NOTIFY_ALL);
     }
 
     ColorPortals.LOGGER.info("destroyed portal with origin " + origin.toShortString());
@@ -105,7 +105,7 @@ public class ColorPortal {
 
   private double getDistCost(double dist) {
     int multiplicator = 1;
-    if (world.getDimensionKey() == DimensionTypes.THE_NETHER) {
+    if (dimension == DimensionTypes.THE_NETHER_ID) {
       multiplicator = 8;
     }
 
@@ -113,15 +113,14 @@ public class ColorPortal {
   }
 
   private double getDimCost() {
-    RegistryKey<DimensionType> type = world.getDimensionKey();
-    if (type == DimensionTypes.OVERWORLD) {
+    if (dimension == DimensionTypes.OVERWORLD_ID) {
       return 0;
     }
-    if (type == DimensionTypes.THE_NETHER) {
+    if (dimension == DimensionTypes.THE_NETHER_ID) {
       return 20;
     }
 
-    if (type == DimensionTypes.THE_END) {
+    if (dimension == DimensionTypes.THE_END_ID) {
       return 50 + getDistCost(1024);
     }
     return -1;
@@ -220,4 +219,27 @@ public class ColorPortal {
     }
   }
 
+  private ColorPortal() {
+
+  }
+
+  public static ColorPortal createFromNbt(NbtCompound tag) {
+    ColorPortal portal = new ColorPortal();
+    portal.id = tag.getInt("id");
+    portal.color = BaseColor.byId(tag.getInt("color"));
+    portal.age = tag.getLong("age");
+    portal.origin = BlockPos.fromLong(tag.getLong("pos"));
+    portal.dimension = Identifier.tryParse(tag.getString("dim"));
+    return portal;
+  }
+
+  public NbtCompound writeNbt() {
+    NbtCompound compound = new NbtCompound();
+    compound.putInt("id", id);
+    compound.putInt("color", color.getId());
+    compound.putLong("age", age);
+    compound.putLong("pos", origin.asLong());
+    compound.putString("dim", dimension.toString());
+    return compound;
+  }
 }

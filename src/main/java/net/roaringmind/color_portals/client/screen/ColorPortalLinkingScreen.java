@@ -25,6 +25,10 @@ public class ColorPortalLinkingScreen extends HandledScreen<ColorPortalLinkingSc
     int x = (width - backgroundWidth) / 2;
     int y = (height - backgroundHeight) / 2;
     drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
+    if (this.handler.getCost() < 0 || this.handler.getCost() > this.client.player.experienceLevel) {
+      RenderSystem.setShaderTexture(0, ColorPortals.LINKING_BUTTON_TEXTURE);
+      drawTexture(matrices, x + 61, y + 49, 0, 38, 55, 19);
+    }
   }
 
   @Override
@@ -40,26 +44,32 @@ public class ColorPortalLinkingScreen extends HandledScreen<ColorPortalLinkingSc
     // center the title
     titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
 
+    if (this.handler.getCost() < 0 || this.handler.getCost() > this.client.player.experienceLevel) {
+      return;
+    }
+
     this.addDrawableChild(
         new TexturedButtonWidget(this.x + 61, this.y + 49, 55, 19, 0, 0, ColorPortals.LINKING_BUTTON_TEXTURE, null));
+  }
+
+  private int getTextX(String text) {
+    return (backgroundWidth - textRenderer.getWidth(text)) / 2;
   }
 
   @Override
   protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
     super.drawForeground(matrices, mouseX, mouseY);
-    int cost = ((ColorPortalLinkingScreenHandler) this.handler).getCost();    
+    int cost = ((ColorPortalLinkingScreenHandler) this.handler).getCost();
 
-    String text = "Link";
-    int textX = (backgroundWidth - textRenderer.getWidth(text)) / 2;
-    int color = 0;
-    this.textRenderer.draw(matrices, text, textX, 54, color);
+    String text;
+    int color;
 
-    text = "cost: " + String.valueOf(cost);
-    textX = (backgroundWidth - textRenderer.getWidth(text)) / 2;
-    color = 0xFF6060;
-    if (this.client.player.experienceLevel >= cost) {
-      color = 8453920;
-    }
-    this.textRenderer.drawWithShadow(matrices, text, textX, 34, color);
+    text = this.handler.getCost() < 0 ? text = "Portal can not be linked" : "cost: " + String.valueOf(cost);
+    color = this.client.player.experienceLevel < cost || this.handler.getCost() < 0 ? 0xFF6060 : 8453920;
+    this.textRenderer.drawWithShadow(matrices, text, getTextX(text), 34, color);
+
+    text = "Link";
+    color = 0;
+    this.textRenderer.draw(matrices, text, getTextX(text), 54, color);
   }
 }
