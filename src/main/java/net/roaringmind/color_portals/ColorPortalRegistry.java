@@ -1,7 +1,6 @@
 package net.roaringmind.color_portals;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Pair;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
@@ -52,15 +51,6 @@ public class ColorPortalRegistry extends PersistentState {
     return list[id];
   }
 
-  public Pair<ColorPortal, ColorPortal> getByColor(int id) {
-    int color_id = id - id % 2;
-    if (color_id > 15) {
-      return null;
-    }
-
-    return new Pair<ColorPortal, ColorPortal>(list[color_id], list[color_id + 1]);
-  }
-
   public static ColorPortalRegistry createFromNbt(NbtCompound tag) {
     NbtCompound compound = tag.getCompound(ColorPortals.MODID);
     ColorPortalRegistry res = new ColorPortalRegistry();
@@ -69,6 +59,7 @@ public class ColorPortalRegistry extends PersistentState {
     }
     return res;
   }
+
   @Override
   public NbtCompound writeNbt(NbtCompound var1) {
     NbtCompound compound = new NbtCompound();
@@ -80,7 +71,7 @@ public class ColorPortalRegistry extends PersistentState {
 
       compound.put(String.valueOf(i), portal_compound);
     }
-  
+
     var1.put(ColorPortals.MODID, compound);
     return var1;
   }

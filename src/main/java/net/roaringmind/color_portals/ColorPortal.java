@@ -9,7 +9,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
@@ -87,8 +86,10 @@ public class ColorPortal {
   }
 
   public static int getCost(int id) {
-    Pair<ColorPortal, ColorPortal> portal_pair = ColorPortals.portalRegistry.getByColor(id);
-    ColorPortal a = portal_pair.getLeft(), b = portal_pair.getRight();
+
+    ColorPortal a = getById(id - id % 2), b = getById(id - (id % 2) + 1);
+
+   
 
     if (a == null || b == null) {
       return -1;
@@ -225,6 +226,10 @@ public class ColorPortal {
   }
 
   public static ColorPortal createFromNbt(NbtCompound tag) {
+    if (tag.isEmpty()) {
+      return null;
+    }
+
     ColorPortal portal = new ColorPortal();
     portal.id = tag.getInt("id");
     portal.color = BaseColor.byId(tag.getInt("color"));
