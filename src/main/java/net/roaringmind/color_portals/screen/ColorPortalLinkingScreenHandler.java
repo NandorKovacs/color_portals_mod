@@ -5,20 +5,29 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.world.World;
 import net.roaringmind.color_portals.ColorPortals;
 
 public class ColorPortalLinkingScreenHandler extends ScreenHandler {
   private int cost;
+  private GlobalPos pos;
+  public ScreenHandlerContext context = ScreenHandlerContext.EMPTY;
 
   public ColorPortalLinkingScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-    this(syncId, playerInventory, 0);
+    this(syncId, playerInventory, 0, GlobalPos.create(World.OVERWORLD, BlockPos.ORIGIN), ScreenHandlerContext.EMPTY);
     cost = buf.readInt();
+    pos = buf.readGlobalPos();
   }
 
-  public ColorPortalLinkingScreenHandler(int syncId, PlayerInventory playerInventory, int cost) {
+  public ColorPortalLinkingScreenHandler(int syncId, PlayerInventory playerInventory, int cost, GlobalPos pos, ScreenHandlerContext context) {
     super(ColorPortals.COLOR_PORTAL_LINKING_SCREEN_HANDLER, syncId);
     this.cost = 0;
+    this.pos = GlobalPos.create(World.OVERWORLD, BlockPos.ORIGIN);
+    this.context = context;
 
     int m;
     int l;
@@ -38,6 +47,10 @@ public class ColorPortalLinkingScreenHandler extends ScreenHandler {
     return cost;
   }
   
+  public GlobalPos getPos() {
+    return pos;
+  }
+
   @Override
   public ItemStack quickMove(PlayerEntity var1, int var2) {
     return ItemStack.EMPTY;

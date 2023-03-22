@@ -2,11 +2,14 @@ package net.roaringmind.color_portals.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.roaringmind.color_portals.ColorPortals;
 import net.roaringmind.color_portals.screen.ColorPortalLinkingScreenHandler;
@@ -49,7 +52,13 @@ public class ColorPortalLinkingScreen extends HandledScreen<ColorPortalLinkingSc
     }
 
     this.addDrawableChild(
-        new TexturedButtonWidget(this.x + 61, this.y + 49, 55, 19, 0, 0, ColorPortals.LINKING_BUTTON_TEXTURE, null));
+        new TexturedButtonWidget(this.x + 61, this.y + 49, 55, 19, 0, 0, ColorPortals.LINKING_BUTTON_TEXTURE,
+            (buttonWidget) -> {
+              PacketByteBuf buf = PacketByteBufs.create();
+              buf.writeGlobalPos(this.handler.getPos());
+              ClientPlayNetworking.send(ColorPortals.LINK_PACKET_CHANNEL_ID, buf);
+              this.close();
+            }));
   }
 
   private int getTextX(String text) {

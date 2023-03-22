@@ -63,6 +63,10 @@ public class ColorPortal {
     return color;
   }
 
+  public BlockPos getPos() {
+    return origin;
+  }
+
   public static ColorPortal getById(int id) {
     if (id == -1) {
       return null;
@@ -75,7 +79,7 @@ public class ColorPortal {
   }
 
   public void destroy(WorldAccess world) {
-    ColorPortals.portalRegistry.removePortal(this.id);
+    ColorPortals.portalRegistry.removePortal(world, this.id);
 
     if (world.getBlockState(origin).isOf(ColorPortals.COLOR_PORTAL_BASE)) {
       world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE),

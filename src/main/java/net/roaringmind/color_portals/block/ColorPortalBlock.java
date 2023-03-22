@@ -20,6 +20,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.roaringmind.color_portals.ColorPortal;
+import net.roaringmind.color_portals.ColorPortals;
 import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 
 public class ColorPortalBlock extends BlockWithEntity {
@@ -101,6 +102,11 @@ public class ColorPortalBlock extends BlockWithEntity {
     ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
     if (portal != null) {
       portal.destroy(world);
+    }
+
+    if (newState.isAir() && ((ColorPortalBlockEntity) world.getBlockEntity(pos)).isBase()) {
+      world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BASE.getDefaultState().with(ColorPortalBase.FACING,
+          Direction.from(state.get(AXIS) == Axis.X ? Axis.Z : Axis.X, Direction.AxisDirection.POSITIVE)));
     }
   }
 }

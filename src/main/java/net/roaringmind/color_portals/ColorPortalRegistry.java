@@ -1,10 +1,19 @@
 package net.roaringmind.color_portals;
 
-import java.util.UUID;
-
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.roaringmind.color_portals.block.ColorPortalBase;
+import net.roaringmind.color_portals.block.ColorPortalBlock;
+import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
+import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
+import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortalRegistry extends PersistentState {
   private ColorPortal[] list;
@@ -22,19 +31,49 @@ public class ColorPortalRegistry extends PersistentState {
     }
   }
 
-  public void removePortal(int id) {
+  public void removePortal(WorldAccess world, int id) {
     markDirty();
+
+    if (links[idToColorId(id)]) {
+      unlink(world, id);
+    }
     list[id] = null;
-    links[(id - id % 2) / 2] = false;
   }
 
-  public void linkPortal(int id, UUID uuid) {
-    if (list[id - id % 2] == null || list[id - id % 2 + 1] == null) {
-      return;
+  private static void baseToBlock(World world, BlockPos pos) {
+    Direction base_direction = world.getBlockState(pos).get(ColorPortalBase.FACING);
+    world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BLOCK
+        .getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
+    ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setBase();
+  }
+
+  private void blockToBase(WorldAccess world, int portal_id) {
+    BlockPos pos = list[portal_id].getPos();
+
+    Direction base_direction = Direction.get(AxisDirection.POSITIVE,
+        world.getBlockState(pos).get(ColorPortalBlock.AXIS));
+    world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BASE.getDefaultState()
+        .with(ColorPortalBase.FACING, base_direction)
+        .with(ColorPortalBase.COLOR, BaseColor.byId(idToColorId(portal_id))), Block.NOTIFY_ALL);
+    ((ColorPortalBaseEntity) world.getBlockEntity(pos)).setPortal(portal_id);
+  }
+
+  public boolean linkPortal(World world, BlockPos pos) {
+    int id = ((ColorPortalBaseEntity) world.getBlockEntity(pos)).getPortal();
+    int pair_id = getPair(id);
+
+    if (list[id] == null || list[pair_id] == null) {
+      return false;
     }
 
-    links[(id - id % 2) / 2] = true;
+    BlockPos pos_a = list[id].getPos(), pos_b = list[pair_id].getPos();
+
+    baseToBlock(world, pos_a);
+    baseToBlock(world, pos_b);
+
+    links[(id) / 2] = true;
     markDirty();
+    return true;
   }
 
   public int addPortal(ColorPortal portal, World world) {
@@ -46,23 +85,24 @@ public class ColorPortalRegistry extends PersistentState {
       return -1;
     }
 
-    ColorPortal a = list[color_id], b = list[color_id + 1];
+    int id_a = color_id * 2, id_b = id_a + 1;
+    ColorPortal a = list[id_a], b = list[id_b];
     if (a == null) {
-      list[color_id] = portal;
-      return color_id;
+      list[id_a] = portal;
+      return id_a;
     }
     if (b == null) {
-      list[color_id + 1] = portal;
-      return color_id + 1;
+      list[id_b] = portal;
+      return id_b;
     }
     if (a.getAge() > b.getAge()) {
       a.destroy(world);
-      list[color_id] = portal;
-      return color_id;
+      list[id_a] = portal;
+      return id_a;
     }
     b.destroy(world);
-    list[color_id + 1] = portal;
-    return color_id + 1;
+    list[id_b] = portal;
+    return id_b;
   }
 
   public ColorPortal getById(int id) {
@@ -106,5 +146,20 @@ public class ColorPortalRegistry extends PersistentState {
     compound.put("links", linkCompound);
     var1.put(ColorPortals.MODID, compound);
     return var1;
+  }
+
+  private void unlink(WorldAccess world, int id) {
+    links[idToColorId(id)] = false;
+
+    blockToBase(world, id);
+    blockToBase(world, getPair(id));
+  }
+
+  private static int getPair(int id) {
+    return id % 2 == 0 ? id + 1 : id - 1;
+  }
+
+  private static int idToColorId(int id) {
+    return (id - id % 2) / 2;
   }
 }

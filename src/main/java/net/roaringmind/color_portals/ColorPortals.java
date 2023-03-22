@@ -7,6 +7,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -23,6 +24,10 @@ import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.ColorPortalBlock;
@@ -48,6 +53,8 @@ public class ColorPortals implements ModInitializer {
 
   public static final Identifier DRAGON_EYE_ID;
   public static final Identifier ENDER_DRAGON_LOOT_TABLE_ID;
+
+  public static final Identifier LINK_PACKET_CHANNEL_ID;
 
   // statics for the base block of the portal
   public static final Block COLOR_PORTAL_BASE;
@@ -78,6 +85,8 @@ public class ColorPortals implements ModInitializer {
     LINKING_SCREEN_HANDLER_ID = new Identifier(MODID, "linking_screen");
 
     DRAGON_EYE_ID = new Identifier(MODID, "dragon_eye");
+
+    LINK_PACKET_CHANNEL_ID = new Identifier(MODID, "link_packet");
 
     // register base
     COLOR_PORTAL_BASE = Registry.register(Registries.BLOCK, COLOR_PORTAL_BASE_ID,
@@ -127,7 +136,18 @@ public class ColorPortals implements ModInitializer {
       portalRegistry = server.getWorld(World.OVERWORLD).getPersistentStateManager()
           .getOrCreate(ColorPortalRegistry::createFromNbt, ColorPortalRegistry::new, MODID);
     });
-    
     portalRegistry.markDirty();
+
+    ServerPlayNetworking.registerGlobalReceiver(ColorPortals.LINK_PACKET_CHANNEL_ID,
+        (server, player, handler, buf, sender) -> {
+          GlobalPos global_pos = buf.readGlobalPos();
+
+          server.execute(() -> {
+            World world = server.getWorld(global_pos.getDimension());
+            BlockPos pos = global_pos.getPos();
+
+            ColorPortals.portalRegistry.linkPortal(world, pos);
+          });
+        });
   }
 }

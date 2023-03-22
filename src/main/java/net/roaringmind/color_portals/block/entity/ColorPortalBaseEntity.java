@@ -13,6 +13,7 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.roaringmind.color_portals.ColorPortal;
 import net.roaringmind.color_portals.ColorPortals;
 import net.roaringmind.color_portals.block.ColorPortalBase;
@@ -30,10 +31,12 @@ public class ColorPortalBaseEntity extends BlockEntity implements ExtendedScreen
   public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
     if (this.world.getBlockState(this.pos).get(ColorPortalBase.COLOR).getId() > 15) {
       return new ColorPortalActivationScreenHandler(syncId, playerInventory, new SimpleInventory(1),
-        ScreenHandlerContext.create(this.world, this.pos));
+          ScreenHandlerContext.create(this.world, this.pos));
     }
 
-    return new ColorPortalLinkingScreenHandler(syncId, playerInventory, 7);
+    return new ColorPortalLinkingScreenHandler(syncId, playerInventory, 7,
+        GlobalPos.create(this.world.getRegistryKey(), this.pos),
+        ScreenHandlerContext.create(this.world, this.pos));
   }
 
   @Override
@@ -43,6 +46,10 @@ public class ColorPortalBaseEntity extends BlockEntity implements ExtendedScreen
 
   public void setPortal(int portal) {
     this.portal_id = portal;
+  }
+
+  public int getPortal() {
+    return portal_id;
   }
 
   @Override
@@ -62,5 +69,6 @@ public class ColorPortalBaseEntity extends BlockEntity implements ExtendedScreen
   @Override
   public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
     buf.writeInt(ColorPortal.getCost(portal_id));
+    buf.writeGlobalPos(GlobalPos.create(this.world.getRegistryKey(), this.pos));
   }
 }
