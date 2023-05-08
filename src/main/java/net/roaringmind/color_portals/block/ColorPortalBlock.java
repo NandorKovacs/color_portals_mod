@@ -25,6 +25,7 @@ import net.minecraft.world.WorldAccess;
 import net.roaringmind.color_portals.ColorPortal;
 import net.roaringmind.color_portals.ColorPortals;
 import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
+import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortalBlock extends BlockWithEntity {
 
@@ -36,6 +37,7 @@ public class ColorPortalBlock extends BlockWithEntity {
   public static final EnumProperty<Direction.Axis> AXIS = Properties.HORIZONTAL_AXIS;
   protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
   protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
+  public static final EnumProperty<BaseColor> COLOR = EnumProperty.of("color_portal_base_color", BaseColor.class);
 
   @Override
   public BlockRenderType getRenderType(BlockState state) {
