@@ -25,8 +25,6 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import net.roaringmind.color_portals.block.ColorPortalBase;

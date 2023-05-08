@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -59,6 +61,10 @@ public class ColorPortal {
     return true;
   }
 
+  public RegistryKey<World> getDimension() {
+    return RegistryKey.of(RegistryKeys.WORLD, dimension);
+  }
+
   public BaseColor getColor() {
     return color;
   }
@@ -92,8 +98,6 @@ public class ColorPortal {
   public static int getCost(int id) {
 
     ColorPortal a = getById(id - id % 2), b = getById(id - (id % 2) + 1);
-
-   
 
     if (a == null || b == null) {
       return -1;

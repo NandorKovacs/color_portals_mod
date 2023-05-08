@@ -95,7 +95,7 @@ public class ColorPortalRegistry extends PersistentState {
       list[id_b] = portal;
       return id_b;
     }
-    if (a.getAge() > b.getAge()) {
+    if (a.getAge() < b.getAge()) {
       a.destroy(world);
       list[id_a] = portal;
       return id_a;

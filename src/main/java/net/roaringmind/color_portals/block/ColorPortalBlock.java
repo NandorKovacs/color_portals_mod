@@ -7,7 +7,10 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
@@ -108,5 +111,18 @@ public class ColorPortalBlock extends BlockWithEntity {
       world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BASE.getDefaultState().with(ColorPortalBase.FACING,
           Direction.from(state.get(AXIS) == Axis.X ? Axis.Z : Axis.X, Direction.AxisDirection.POSITIVE)));
     }
+  }
+
+  @Override
+  public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+      if (world instanceof ServerWorld && !entity.hasVehicle() && !entity.hasPassengers() && entity.canUsePortals()) {
+          // fix reg key
+          RegistryKey<World> registryKey = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal()).getDimension();
+          ServerWorld serverWorld = ((ServerWorld)world).getServer().getWorld(registryKey);
+          if (serverWorld == null) {
+              return;
+          }
+          entity.moveToWorld(serverWorld);
+      }
   }
 }
