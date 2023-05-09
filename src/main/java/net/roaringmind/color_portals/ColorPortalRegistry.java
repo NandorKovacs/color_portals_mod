@@ -3,10 +3,12 @@ package net.roaringmind.color_portals;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Direction.AxisDirection;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
@@ -71,10 +73,15 @@ public class ColorPortalRegistry extends PersistentState {
     return list[partner_id].getDimension();
   }
 
-  public TeleportTarget getTeleportTarget(int id, ) {
+  public TeleportTarget getTeleportTarget(int id, World startworld, World endworld, float yaw, float pitch, Vec3d velocity) {
     int partner_id = getPartnerId(id);
-    return list[partner_id].getTeleportSpawn();
+
+    boolean turn = startworld.getBlockState(list[id].getPos()).get(Properties.HORIZONTAL_AXIS) != endworld
+        .getBlockState(list[partner_id].getPos()).get(Properties.HORIZONTAL_AXIS);
+
+    return list[partner_id].getTeleportSpawn(endworld, turn, yaw, pitch, velocity);
   }
+
   public boolean linkPortal(World world, BlockPos pos) {
     int id = ((ColorPortalBaseEntity) world.getBlockEntity(pos)).getPortal();
     int pair_id = getPair(id);

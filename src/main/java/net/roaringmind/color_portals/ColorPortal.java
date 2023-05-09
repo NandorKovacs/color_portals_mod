@@ -10,7 +10,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -261,7 +260,7 @@ public class ColorPortal {
     return compound;
   }
 
-  public TeleportTarget getTeleportSpawn(ServerWorld world, boolean turn, float yaw, float pitch, Vec3d velocity) {
+  public TeleportTarget getTeleportSpawn(World world, boolean turn, float yaw, float pitch, Vec3d velocity) {
     Vec3d p = null;
     for (BlockPos pos = origin; world.getBlockState(pos).isOf(ColorPortals.COLOR_PORTAL_BLOCK); pos = pos.down()) {
       p = new Vec3d((double) pos.getX(), (double) pos.getY(), (double) pos.getZ());

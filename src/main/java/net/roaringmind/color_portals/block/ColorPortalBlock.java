@@ -131,7 +131,7 @@ public class ColorPortalBlock extends BlockWithEntity {
       if (serverWorld == null) {
         return;
       }
-      moveToWorld(entity, serverWorld, portal_id);
+      moveToWorld(entity, serverWorld, world, portal_id);
     }
   }
 
@@ -139,14 +139,14 @@ public class ColorPortalBlock extends BlockWithEntity {
   // it is copied code from the source
   // it should asap be rewritten to be a mixin
   // for now it should work though
-  public Entity moveToWorld(Entity e, ServerWorld destination, int portal_id) {
+  public Entity moveToWorld(Entity e, ServerWorld destination, World startingWorld, int portal_id) {
       if (!(e.world instanceof ServerWorld) || e.isRemoved()) {
           return null;
       }
       e.world.getProfiler().push("changeDimension");
       e.detach();
       e.world.getProfiler().push("reposition");
-      TeleportTarget teleportTarget = ColorPortals.portalRegistry.getTeleportTarget(portal_id);
+      TeleportTarget teleportTarget = ColorPortals.portalRegistry.getTeleportTarget(portal_id, startingWorld, destination, e.getYaw(), e.getPitch(), e.getVelocity());
       if (teleportTarget == null) {
           return null;
       }
