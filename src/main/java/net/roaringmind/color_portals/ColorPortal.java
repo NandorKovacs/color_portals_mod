@@ -10,10 +10,13 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.dimension.DimensionTypes;
@@ -54,7 +57,8 @@ public class ColorPortal {
 
     for (BlockPos block_pos : portalBlocks) {
       world.setBlockState(block_pos,
-          ColorPortals.COLOR_PORTAL_BLOCK.getColoredStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X, color));
+          ColorPortals.COLOR_PORTAL_BLOCK
+              .getColoredStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X, color));
       ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortal(portal.getId());
     }
     ((ColorPortalBaseEntity) e).setPortal(portal.getId());
@@ -255,5 +259,16 @@ public class ColorPortal {
     compound.putLong("pos", origin.asLong());
     compound.putString("dim", dimension.toString());
     return compound;
+  }
+
+  public TeleportTarget getTeleportSpawn(ServerWorld world, boolean turn, float yaw, float pitch, Vec3d velocity) {
+    Vec3d p = null;
+    for (BlockPos pos = origin; world.getBlockState(pos).isOf(ColorPortals.COLOR_PORTAL_BLOCK); pos = pos.down()) {
+      p = new Vec3d((double) pos.getX(), (double) pos.getY(), (double) pos.getZ());
+    }
+    Vec3d v = !turn ? velocity : new Vec3d(velocity.z, velocity.y, -velocity.x);
+
+    float y = yaw + (!turn ? 0:90);
+    return new TeleportTarget(p, v, y, pitch);
   }
 }

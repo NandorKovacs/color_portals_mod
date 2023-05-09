@@ -7,10 +7,12 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.Entity.RemovalReason;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
@@ -18,9 +20,9 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.roaringmind.color_portals.ColorPortal;
@@ -117,21 +119,57 @@ public class ColorPortalBlock extends BlockWithEntity {
     }
   }
 
-  // @Override
-  // public void onEntityCollision(BlockState state, World world, BlockPos pos,
-  // Entity entity) {
-  // if (world instanceof ServerWorld && !entity.hasVehicle() &&
-  // !entity.hasPassengers() && entity.canUsePortals()) {
-  // // fix reg key
-  // RegistryKey<World> registryKey =
-  // ColorPortal.getById(((ColorPortalBlockEntity)
-  // world.getBlockEntity(pos)).getPortal()).getDimension();
-  // ServerWorld serverWorld =
-  // ((ServerWorld)world).getServer().getWorld(registryKey);
-  // if (serverWorld == null) {
-  // return;
-  // }
-  // entity.moveToWorld(serverWorld);
-  // }
-  // }
+  @Override
+  public void onEntityCollision(BlockState state, World world, BlockPos pos,
+      Entity entity) {
+    if (world instanceof ServerWorld && !entity.hasVehicle() &&
+        !entity.hasPassengers() && entity.canUsePortals()) {
+      // fix reg key
+      int portal_id = ((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal();
+      RegistryKey<World> registryKey = ColorPortals.portalRegistry.getPartnerDimension(portal_id);
+      ServerWorld serverWorld = ((ServerWorld) world).getServer().getWorld(registryKey);
+      if (serverWorld == null) {
+        return;
+      }
+      moveToWorld(entity, serverWorld, portal_id);
+    }
+  }
+
+  // !this is very bad
+  // it is copied code from the source
+  // it should asap be rewritten to be a mixin
+  // for now it should work though
+  public Entity moveToWorld(Entity e, ServerWorld destination, int portal_id) {
+      if (!(e.world instanceof ServerWorld) || e.isRemoved()) {
+          return null;
+      }
+      e.world.getProfiler().push("changeDimension");
+      e.detach();
+      e.world.getProfiler().push("reposition");
+      TeleportTarget teleportTarget = ColorPortals.portalRegistry.getTeleportTarget(portal_id);
+      if (teleportTarget == null) {
+          return null;
+      }
+      e.world.getProfiler().swap("reloading");
+      Entity entity = e.getType().create(destination);
+      if (entity != null) {
+          ((Entity)entity).copyFrom(e);
+          ((Entity)entity).refreshPositionAndAngles(teleportTarget.position.x, teleportTarget.position.y, teleportTarget.position.z, teleportTarget.yaw, ((Entity)entity).getPitch());
+          ((Entity)entity).setVelocity(teleportTarget.velocity);
+          destination.onDimensionChanged((Entity)entity);
+          if (destination.getRegistryKey() == World.END) {
+              ServerWorld.createEndSpawnPlatform(destination);
+          }
+      }
+      e.setRemoved(RemovalReason.CHANGED_DIMENSION);
+      if (e instanceof MobEntity) {
+        ((MobEntity)e).detachLeash(true, false);
+        ((MobEntity)e).getItemsEquipped().forEach(stack -> stack.setCount(0));
+      }
+      e.world.getProfiler().pop();
+      ((ServerWorld)e.world).resetIdleTimeout();
+      destination.resetIdleTimeout();
+      e.world.getProfiler().pop();
+      return entity;
+  }
 }
