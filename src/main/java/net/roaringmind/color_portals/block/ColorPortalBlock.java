@@ -7,10 +7,10 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
@@ -18,6 +18,7 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -31,13 +32,14 @@ public class ColorPortalBlock extends BlockWithEntity {
 
   public ColorPortalBlock(Settings settings) {
     super(settings);
+    this.setDefaultState(this.stateManager.getDefaultState().with(AXIS, Axis.X).with(COLOR, BaseColor.WHITE));
   }
 
   // copied from NetherPortalBlock {
   public static final EnumProperty<Direction.Axis> AXIS = Properties.HORIZONTAL_AXIS;
   protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
   protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
-  public static final EnumProperty<BaseColor> COLOR = EnumProperty.of("color_portal_base_color", BaseColor.class);
+  public static final EnumProperty<BaseColor> COLOR = EnumProperty.of("color_portal_block_color", BaseColor.class);
 
   @Override
   public BlockRenderType getRenderType(BlockState state) {
@@ -73,11 +75,11 @@ public class ColorPortalBlock extends BlockWithEntity {
 
   @Override
   protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-    builder.add(AXIS);
+    builder.add(AXIS, COLOR);
   }
 
-  public BlockState getStateWithRotation(Direction.Axis axis) {
-    return this.getDefaultState().with(AXIS, axis);
+  public BlockState getColoredStateWithRotation(Direction.Axis axis, BaseColor color) {
+    return this.getDefaultState().with(AXIS, axis).with(COLOR, color);
   }
 
   @Override
@@ -115,16 +117,21 @@ public class ColorPortalBlock extends BlockWithEntity {
     }
   }
 
-  @Override
-  public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-      if (world instanceof ServerWorld && !entity.hasVehicle() && !entity.hasPassengers() && entity.canUsePortals()) {
-          // fix reg key
-          RegistryKey<World> registryKey = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal()).getDimension();
-          ServerWorld serverWorld = ((ServerWorld)world).getServer().getWorld(registryKey);
-          if (serverWorld == null) {
-              return;
-          }
-          entity.moveToWorld(serverWorld);
-      }
-  }
+  // @Override
+  // public void onEntityCollision(BlockState state, World world, BlockPos pos,
+  // Entity entity) {
+  // if (world instanceof ServerWorld && !entity.hasVehicle() &&
+  // !entity.hasPassengers() && entity.canUsePortals()) {
+  // // fix reg key
+  // RegistryKey<World> registryKey =
+  // ColorPortal.getById(((ColorPortalBlockEntity)
+  // world.getBlockEntity(pos)).getPortal()).getDimension();
+  // ServerWorld serverWorld =
+  // ((ServerWorld)world).getServer().getWorld(registryKey);
+  // if (serverWorld == null) {
+  // return;
+  // }
+  // entity.moveToWorld(serverWorld);
+  // }
+  // }
 }

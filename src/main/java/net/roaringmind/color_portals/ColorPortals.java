@@ -98,7 +98,7 @@ public class ColorPortals implements ModInitializer {
     // register portal block
     COLOR_PORTAL_BLOCK = Registry.register(Registries.BLOCK, COLOR_PORTAL_BLOCK_ID,
         new ColorPortalBlock(FabricBlockSettings.of(Material.PORTAL).noCollision().strength(-1.0f)
-            .sounds(BlockSoundGroup.GLASS).luminance(state -> 11)));
+            .sounds(BlockSoundGroup.GLASS).luminance(state -> 11).nonOpaque()));
     COLOR_PORTAL_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, COLOR_PORTAL_BLOCK_ID,
         FabricBlockEntityTypeBuilder.create(ColorPortalBlockEntity::new, COLOR_PORTAL_BLOCK).build(null));
 

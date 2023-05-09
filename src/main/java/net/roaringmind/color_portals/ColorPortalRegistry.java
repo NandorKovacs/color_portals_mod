@@ -42,8 +42,9 @@ public class ColorPortalRegistry extends PersistentState {
 
   private static void baseToBlock(World world, BlockPos pos) {
     Direction base_direction = world.getBlockState(pos).get(ColorPortalBase.FACING);
+    BaseColor color = world.getBlockState(pos).get(ColorPortalBase.COLOR);
     world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BLOCK
-        .getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
+        .getColoredStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X, color));
     ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setBase();
   }
 

@@ -16,6 +16,7 @@ public class ClientColorPortals implements ClientModInitializer {
     HandledScreens.register(ColorPortals.COLOR_PORTAL_LINKING_SCREEN_HANDLER, ColorPortalLinkingScreen::new);
 
     BlockRenderLayerMap.INSTANCE.putBlock(ColorPortals.COLOR_PORTAL_BASE, RenderLayer.getCutout());
+    BlockRenderLayerMap.INSTANCE.putBlock(ColorPortals.COLOR_PORTAL_BLOCK, RenderLayer.getTranslucent());
   }
 
 }
