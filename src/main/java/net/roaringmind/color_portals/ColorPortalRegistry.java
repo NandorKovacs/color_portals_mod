@@ -1,8 +1,10 @@
 package net.roaringmind.color_portals;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -46,10 +48,13 @@ public class ColorPortalRegistry extends PersistentState {
 
   private static void baseToBlock(World world, BlockPos pos) {
     Direction base_direction = world.getBlockState(pos).get(ColorPortalBase.FACING);
+    int portal_id = ((ColorPortalBaseEntity)world.getBlockEntity(pos)).getPortal();
     BaseColor color = world.getBlockState(pos).get(ColorPortalBase.COLOR);
     world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BLOCK
         .getColoredStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X, color));
     ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setBase();
+    ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setPortal(portal_id);
+
   }
 
   private void blockToBase(WorldAccess world, int portal_id) {
@@ -73,13 +78,22 @@ public class ColorPortalRegistry extends PersistentState {
     return list[partner_id].getDimension();
   }
 
-  public TeleportTarget getTeleportTarget(int id, World startworld, World endworld, float yaw, float pitch, Vec3d velocity) {
+  public TeleportTarget getTeleportTarget(ServerWorld destination, int id, Entity e) {
     int partner_id = getPartnerId(id);
 
-    boolean turn = startworld.getBlockState(list[id].getPos()).get(Properties.HORIZONTAL_AXIS) != endworld
+    ServerWorld portalWorld = destination.getServer().getWorld(list[id].getDimension());
+
+    boolean turn = portalWorld.getBlockState(list[id].getPos()).get(Properties.HORIZONTAL_AXIS) != destination
         .getBlockState(list[partner_id].getPos()).get(Properties.HORIZONTAL_AXIS);
 
-    return list[partner_id].getTeleportSpawn(endworld, turn, yaw, pitch, velocity);
+    float yaw = e.getBodyYaw();
+    Vec3d velocity = e.getVelocity();
+    if (turn) {
+      yaw += 90;
+      velocity = new Vec3d(velocity.z, velocity.y, -velocity.x);
+    }
+
+    return new TeleportTarget(list[partner_id].getTeleportSpawn(destination), velocity, yaw, e.getPitch());
   }
 
   public boolean linkPortal(World world, BlockPos pos) {
