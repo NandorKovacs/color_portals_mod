@@ -261,11 +261,11 @@ public class ColorPortal {
   }
 
   public Vec3d getTeleportSpawn(ServerWorld world) {
-    int i = 0;
-    while (world.getBlockState(origin.down()).isOf(ColorPortals.COLOR_PORTAL_BLOCK)) {
-      ++i;
+    BlockPos res = this.getPos();
+    for (BlockPos pos = this.getPos(); world.getBlockState(pos).isOf(ColorPortals.COLOR_PORTAL_BLOCK); pos = pos.down()) {
+      res = pos;
     }
-  
-    return new Vec3d(origin.getX(), origin.getZ() - i, origin.getY());
+    
+    return new Vec3d(res.getX(), res.getY(), res.getZ());
   }
 }
