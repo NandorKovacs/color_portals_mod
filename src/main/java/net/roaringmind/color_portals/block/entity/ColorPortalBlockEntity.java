@@ -8,6 +8,7 @@ import net.roaringmind.color_portals.ColorPortals;
 
 public class ColorPortalBlockEntity extends BlockEntity {
   private int portal_id = -1;
+  private boolean is_base = false;
 
   public ColorPortalBlockEntity(BlockPos pos, BlockState state) {
     super(ColorPortals.COLOR_PORTAL_BLOCK_ENTITY, pos, state);
@@ -33,5 +34,13 @@ public class ColorPortalBlockEntity extends BlockEntity {
     super.readNbt(nbt);
 
     portal_id = nbt.getInt("color_portals_portal");
+  }
+
+  public void setBase() {
+    this.is_base = true;
+  }
+
+  public boolean isBase() {
+    return is_base;
   }
 }

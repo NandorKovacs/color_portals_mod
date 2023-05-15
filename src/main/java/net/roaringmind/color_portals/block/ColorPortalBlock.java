@@ -7,6 +7,7 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
@@ -20,18 +21,23 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.roaringmind.color_portals.ColorPortal;
+import net.roaringmind.color_portals.ColorPortals;
+import net.roaringmind.color_portals.access.EntityPortalInterface;
 import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
+import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortalBlock extends BlockWithEntity {
 
   public ColorPortalBlock(Settings settings) {
     super(settings);
+    this.setDefaultState(this.stateManager.getDefaultState().with(AXIS, Axis.X).with(COLOR, BaseColor.WHITE));
   }
 
   // copied from NetherPortalBlock {
   public static final EnumProperty<Direction.Axis> AXIS = Properties.HORIZONTAL_AXIS;
   protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
   protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
+  public static final EnumProperty<BaseColor> COLOR = EnumProperty.of("color_portal_block_color", BaseColor.class);
 
   @Override
   public BlockRenderType getRenderType(BlockState state) {
@@ -67,11 +73,11 @@ public class ColorPortalBlock extends BlockWithEntity {
 
   @Override
   protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-    builder.add(AXIS);
+    builder.add(AXIS, COLOR);
   }
 
-  public BlockState getStateWithRotation(Direction.Axis axis) {
-    return this.getDefaultState().with(AXIS, axis);
+  public BlockState getColoredStateWithRotation(Direction.Axis axis, BaseColor color) {
+    return this.getDefaultState().with(AXIS, axis).with(COLOR, color);
   }
 
   @Override
@@ -90,7 +96,7 @@ public class ColorPortalBlock extends BlockWithEntity {
 
     ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
     if (portal != null) {
-      portal.destroy();
+      portal.destroy(world);
     }
 
     return Blocks.AIR.getDefaultState();
@@ -100,7 +106,21 @@ public class ColorPortalBlock extends BlockWithEntity {
   public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
     ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
     if (portal != null) {
-      portal.destroy();
+      portal.destroy(world);
+    }
+
+    if (newState.isAir() && ((ColorPortalBlockEntity) world.getBlockEntity(pos)).isBase()) {
+      world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BASE.getDefaultState().with(ColorPortalBase.FACING,
+          Direction.from(state.get(AXIS) == Axis.X ? Axis.Z : Axis.X, Direction.AxisDirection.POSITIVE)));
+    }
+  }
+
+  @Override
+  public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+    if (world.getBlockEntity(pos) instanceof ColorPortalBlockEntity
+        && ((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal() != -1) {
+
+      ((EntityPortalInterface) entity).setInColorPortal(pos, ((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
     }
   }
 }
