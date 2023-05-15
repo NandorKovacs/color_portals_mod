@@ -7,55 +7,36 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.dimension.DimensionTypes;
 import net.roaringmind.color_portals.block.ColorPortalBase;
 import net.roaringmind.color_portals.block.entity.ColorPortalBaseEntity;
 import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortal {
-  private static ColorPortalRegistry portalRegistry = new ColorPortalRegistry();
   private int id;
   private BlockPos origin;
   private BaseColor color;
   private long age;
-  private World world;
+  private Identifier dimension;
 
   private ColorPortal(BlockPos origin, World world, BaseColor color) {
     this.origin = origin;
     this.age = world.getTime();
     this.color = color;
-    this.world = world;
-
-    this.id = portalRegistry.addPortal(this);
-  }
-
-  public BaseColor getColor() {
-    return color;
-  }
-
-  public static ColorPortal getById(int id) {
-    if (id == -1) {
-      return null;
-    }
-    return portalRegistry.getById(id);
-  }
-
-  public long getAge() {
-    return this.age;
-  }
-
-  public void destroy() {
-    portalRegistry.removePortal(this.id);
-
-    if (world.getBlockState(origin).isOf(ColorPortals.COLOR_PORTAL_BASE)) {
-      world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE));
-    }
-
-    ColorPortals.LOGGER.info("destroyed portal with origin " + origin.toShortString());
+    dimension = world.getDimensionKey().getValue();
+    this.id = ColorPortals.portalRegistry.addPortal(this, world);
   }
 
   public static boolean createColorPortal(World world, BlockPos pos, BaseColor color) {
@@ -75,11 +56,93 @@ public class ColorPortal {
 
     for (BlockPos block_pos : portalBlocks) {
       world.setBlockState(block_pos,
-          ColorPortals.COLOR_PORTAL_BLOCK.getStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X));
+          ColorPortals.COLOR_PORTAL_BLOCK
+              .getColoredStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X, color));
       ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortal(portal.getId());
     }
     ((ColorPortalBaseEntity) e).setPortal(portal.getId());
     return true;
+  }
+
+  public RegistryKey<World> getDimension() {
+    return RegistryKey.of(RegistryKeys.WORLD, dimension);
+  }
+
+  public BaseColor getColor() {
+    return color;
+  }
+
+  public BlockPos getPos() {
+    return origin;
+  }
+
+  public static ColorPortal getById(int id) {
+    if (id == -1) {
+      return null;
+    }
+    return ColorPortals.portalRegistry.getById(id);
+  }
+
+  public long getAge() {
+    return this.age;
+  }
+
+  public void destroy(WorldAccess world) {
+    ColorPortals.portalRegistry.removePortal(world, this.id);
+
+    if (world.getBlockState(origin).isOf(ColorPortals.COLOR_PORTAL_BASE)) {
+      world.setBlockState(origin, world.getBlockState(origin).with(ColorPortalBase.COLOR, BaseColor.NONE),
+          Block.NOTIFY_ALL);
+    }
+
+    ColorPortals.LOGGER.info("destroyed portal with origin " + origin.toShortString());
+  }
+
+  public static int getCost(int id) {
+
+    ColorPortal a = getById(id - id % 2), b = getById(id - (id % 2) + 1);
+
+    if (a == null || b == null) {
+      return -1;
+    }
+
+    double dist = getEuclideanHorizontalDistance(a.origin, b.origin);
+
+    int base_cost = 5;
+    double dim_cost_a = a.getDimCost();
+    double dim_cost_b = b.getDimCost();
+    double dist_cost = Math.max(a.getDistCost(dist), b.getDistCost(dist));
+
+    return (int) (base_cost + dim_cost_a + dim_cost_b + dist_cost);
+  }
+
+  private double getDistCost(double dist) {
+    int multiplicator = 1;
+    if (dimension == DimensionTypes.THE_NETHER_ID) {
+      multiplicator = 8;
+    }
+
+    return ((dist * multiplicator) / 160) * ((dist * multiplicator) / 160);
+  }
+
+  private double getDimCost() {
+    if (dimension == DimensionTypes.OVERWORLD_ID) {
+      return 0;
+    }
+    if (dimension == DimensionTypes.THE_NETHER_ID) {
+      return 20;
+    }
+
+    if (dimension == DimensionTypes.THE_END_ID) {
+      return 50 + getDistCost(1024);
+    }
+    return -1;
+  }
+
+  private static double getEuclideanHorizontalDistance(BlockPos a, BlockPos b) {
+    int x = Math.abs(a.getX() - b.getX()), y = Math.abs(a.getY() - b.getY());
+
+    return Math.sqrt(x * x + y + y);
   }
 
   private int getId() {
@@ -169,4 +232,40 @@ public class ColorPortal {
     }
   }
 
+  private ColorPortal() {
+
+  }
+
+  public static ColorPortal createFromNbt(NbtCompound tag) {
+    if (tag.isEmpty()) {
+      return null;
+    }
+
+    ColorPortal portal = new ColorPortal();
+    portal.id = tag.getInt("id");
+    portal.color = BaseColor.byId(tag.getInt("color"));
+    portal.age = tag.getLong("age");
+    portal.origin = BlockPos.fromLong(tag.getLong("pos"));
+    portal.dimension = Identifier.tryParse(tag.getString("dim"));
+    return portal;
+  }
+
+  public NbtCompound writeNbt() {
+    NbtCompound compound = new NbtCompound();
+    compound.putInt("id", id);
+    compound.putInt("color", color.getId());
+    compound.putLong("age", age);
+    compound.putLong("pos", origin.asLong());
+    compound.putString("dim", dimension.toString());
+    return compound;
+  }
+
+  public Vec3d getTeleportSpawn(ServerWorld world) {
+    BlockPos res = this.getPos();
+    for (BlockPos pos = this.getPos(); world.getBlockState(pos).isOf(ColorPortals.COLOR_PORTAL_BLOCK); pos = pos.down()) {
+      res = pos;
+    }
+    
+    return new Vec3d(res.getX(), res.getY(), res.getZ());
+  }
 }

@@ -1,10 +1,100 @@
 {
   "variants": {
-    "axis=x": {
-      "model": "color_portals:block/color_portal_block_ns"
+    "axis=x,color_portal_block_color=black": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_black"
     },
-    "axis=z": {
-      "model": "color_portals:block/color_portal_block_ew"
+    "axis=z,color_portal_block_color=black": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_black"
+    },
+    "axis=x,color_portal_block_color=red": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_red"
+    },
+    "axis=z,color_portal_block_color=red": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_red"
+    },
+    "axis=x,color_portal_block_color=green": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_green"
+    },
+    "axis=z,color_portal_block_color=green": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_green"
+    },
+    "axis=x,color_portal_block_color=brown": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_brown"
+    },
+    "axis=z,color_portal_block_color=brown": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_brown"
+    },
+    "axis=x,color_portal_block_color=blue": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_blue"
+    },
+    "axis=z,color_portal_block_color=blue": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_blue"
+    },
+    "axis=x,color_portal_block_color=purple": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_purple"
+    },
+    "axis=z,color_portal_block_color=purple": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_purple"
+    },
+    "axis=x,color_portal_block_color=cyan": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_cyan"
+    },
+    "axis=z,color_portal_block_color=cyan": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_cyan"
+    },
+    "axis=x,color_portal_block_color=light_gray": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_light_gray"
+    },
+    "axis=z,color_portal_block_color=light_gray": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_light_gray"
+    },
+    "axis=x,color_portal_block_color=gray": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_gray"
+    },
+    "axis=z,color_portal_block_color=gray": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_gray"
+    },
+    "axis=x,color_portal_block_color=pink": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_pink"
+    },
+    "axis=z,color_portal_block_color=pink": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_pink"
+    },
+    "axis=x,color_portal_block_color=lime": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_lime"
+    },
+    "axis=z,color_portal_block_color=lime": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_lime"
+    },
+    "axis=x,color_portal_block_color=yellow": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_yellow"
+    },
+    "axis=z,color_portal_block_color=yellow": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_yellow"
+    },
+    "axis=x,color_portal_block_color=light_blue": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_light_blue"
+    },
+    "axis=z,color_portal_block_color=light_blue": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_light_blue"
+    },
+    "axis=x,color_portal_block_color=magenta": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_magenta"
+    },
+    "axis=z,color_portal_block_color=magenta": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_magenta"
+    },
+    "axis=x,color_portal_block_color=orange": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_orange"
+    },
+    "axis=z,color_portal_block_color=orange": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_orange"
+    },
+    "axis=x,color_portal_block_color=white": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ns_white"
+    },
+    "axis=z,color_portal_block_color=white": {
+      "model": "color_portals:block/color_portal_block/color_portal_block_ew_white"
     }
   }
 }
