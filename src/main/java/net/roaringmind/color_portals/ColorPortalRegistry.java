@@ -22,69 +22,69 @@ import net.roaringmind.color_portals.block.entity.ColorPortalBlockEntity;
 import net.roaringmind.color_portals.block.enums.BaseColor;
 
 public class ColorPortalRegistry extends PersistentState {
-  private ColorPortal[] list;
-  private Boolean[] links;
+  private ColorPortal[] portalList;
+  private Boolean[] portalLinks;
 
   public ColorPortalRegistry() {
-    list = new ColorPortal[32];
-    links = new Boolean[16];
+    portalList = new ColorPortal[32];
+    portalLinks = new Boolean[16];
     for (int i = 0; i < 32; ++i) {
-      list[i] = null;
+      portalList[i] = null;
       if (i >= 16) {
         continue;
       }
-      links[i] = false;
+      portalLinks[i] = false;
     }
   }
 
   public void removePortal(WorldAccess world, int id) {
     markDirty();
 
-    if (links[idToColorId(id)]) {
+    if (portalLinks[idToColorId(id)]) {
       unlink(world, id);
     }
-    list[id] = null;
+    portalList[id] = null;
   }
 
   private static void baseToBlock(World world, BlockPos pos) {
     Direction base_direction = world.getBlockState(pos).get(ColorPortalBase.FACING);
-    int portal_id = ((ColorPortalBaseEntity)world.getBlockEntity(pos)).getPortal();
+    int portal_id = ((ColorPortalBaseEntity)world.getBlockEntity(pos)).getPortalId();
     BaseColor color = world.getBlockState(pos).get(ColorPortalBase.COLOR);
     world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BLOCK
         .getColoredStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X, color));
     ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setBase();
-    ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setPortal(portal_id);
+    ((ColorPortalBlockEntity) world.getBlockEntity(pos)).setPortalId(portal_id);
 
   }
 
   private void blockToBase(WorldAccess world, int portal_id) {
-    BlockPos pos = list[portal_id].getPos();
+    BlockPos pos = portalList[portal_id].getPos();
 
     Direction base_direction = Direction.get(AxisDirection.POSITIVE,
         world.getBlockState(pos).get(ColorPortalBlock.AXIS));
     world.setBlockState(pos, ColorPortals.COLOR_PORTAL_BASE.getDefaultState()
         .with(ColorPortalBase.FACING, base_direction)
         .with(ColorPortalBase.COLOR, BaseColor.byId(idToColorId(portal_id))), Block.NOTIFY_ALL);
-    ((ColorPortalBaseEntity) world.getBlockEntity(pos)).setPortal(portal_id);
+    ((ColorPortalBaseEntity) world.getBlockEntity(pos)).setPortalId(portal_id);
   }
 
-  private int getPartnerId(int id) {
+  private static int getPartnerId(int id) {
     return id % 2 == 1 ? id - 1 : id + 1;
   }
 
   public RegistryKey<World> getPartnerDimension(int id) {
     int partner_id = getPartnerId(id);
 
-    return list[partner_id].getDimension();
+    return portalList[partner_id].getDimension();
   }
 
   public TeleportTarget getTeleportTarget(ServerWorld destination, int id, Entity e) {
     int partner_id = getPartnerId(id);
 
-    ServerWorld portalWorld = destination.getServer().getWorld(list[id].getDimension());
+    ServerWorld portalWorld = destination.getServer().getWorld(portalList[id].getDimension());
 
-    boolean turn = portalWorld.getBlockState(list[id].getPos()).get(Properties.HORIZONTAL_AXIS) != destination
-        .getBlockState(list[partner_id].getPos()).get(Properties.HORIZONTAL_AXIS);
+    boolean turn = portalWorld.getBlockState(portalList[id].getPos()).get(Properties.HORIZONTAL_AXIS) != destination
+        .getBlockState(portalList[partner_id].getPos()).get(Properties.HORIZONTAL_AXIS);
 
     float yaw = e.getBodyYaw();
     Vec3d velocity = e.getVelocity();
@@ -93,23 +93,23 @@ public class ColorPortalRegistry extends PersistentState {
       velocity = new Vec3d(velocity.z, velocity.y, -velocity.x);
     }
 
-    return new TeleportTarget(list[partner_id].getTeleportSpawn(destination), velocity, yaw, e.getPitch());
+    return new TeleportTarget(portalList[partner_id].getTeleportSpawn(destination), velocity, yaw, e.getPitch());
   }
 
   public boolean linkPortal(World world, BlockPos pos) {
-    int id = ((ColorPortalBaseEntity) world.getBlockEntity(pos)).getPortal();
-    int pair_id = getPair(id);
+    int id = ((ColorPortalBaseEntity) world.getBlockEntity(pos)).getPortalId();
+    int pair_id = getPartnerId(id);
 
-    if (list[id] == null || list[pair_id] == null) {
+    if (portalList[id] == null || portalList[pair_id] == null) {
       return false;
     }
 
-    BlockPos pos_a = list[id].getPos(), pos_b = list[pair_id].getPos();
+    BlockPos pos_a = portalList[id].getPos(), pos_b = portalList[pair_id].getPos();
 
     baseToBlock(world, pos_a);
     baseToBlock(world, pos_b);
 
-    links[(id) / 2] = true;
+    portalLinks[(id) / 2] = true;
     markDirty();
     return true;
   }
@@ -124,27 +124,27 @@ public class ColorPortalRegistry extends PersistentState {
     }
 
     int id_a = color_id * 2, id_b = id_a + 1;
-    ColorPortal a = list[id_a], b = list[id_b];
+    ColorPortal a = portalList[id_a], b = portalList[id_b];
     if (a == null) {
-      list[id_a] = portal;
+      portalList[id_a] = portal;
       return id_a;
     }
     if (b == null) {
-      list[id_b] = portal;
+      portalList[id_b] = portal;
       return id_b;
     }
     if (a.getAge() < b.getAge()) {
       a.destroy(world);
-      list[id_a] = portal;
+      portalList[id_a] = portal;
       return id_a;
     }
     b.destroy(world);
-    list[id_b] = portal;
+    portalList[id_b] = portal;
     return id_b;
   }
 
   public ColorPortal getById(int id) {
-    return list[id];
+    return portalList[id];
   }
 
   public static ColorPortalRegistry createFromNbt(NbtCompound tag) {
@@ -154,10 +154,10 @@ public class ColorPortalRegistry extends PersistentState {
 
     ColorPortalRegistry res = new ColorPortalRegistry();
     for (int i = 0; i < 32; ++i) {
-      res.list[i] = ColorPortal.createFromNbt(portals.getCompound(String.valueOf(i)));
+      res.portalList[i] = ColorPortal.createFromNbt(portals.getCompound(String.valueOf(i)));
     }
     for (int i = 0; i < 16; ++i) {
-      res.links[i] = linkCompound.getBoolean(String.valueOf(i));
+      res.portalLinks[i] = linkCompound.getBoolean(String.valueOf(i));
     }
     return res;
   }
@@ -168,8 +168,8 @@ public class ColorPortalRegistry extends PersistentState {
     NbtCompound portals = new NbtCompound();
     for (int i = 0; i < 32; ++i) {
       NbtCompound portal_compound = new NbtCompound();
-      if (list[i] != null) {
-        portal_compound = list[i].writeNbt();
+      if (portalList[i] != null) {
+        portal_compound = portalList[i].writeNbt();
       }
 
       portals.put(String.valueOf(i), portal_compound);
@@ -177,7 +177,7 @@ public class ColorPortalRegistry extends PersistentState {
 
     NbtCompound linkCompound = new NbtCompound();
     for (int i = 0; i < 16; ++i) {
-      linkCompound.putBoolean(String.valueOf(i), links[i]);
+      linkCompound.putBoolean(String.valueOf(i), portalLinks[i]);
     }
 
     compound.put("portals", portals);
@@ -187,14 +187,10 @@ public class ColorPortalRegistry extends PersistentState {
   }
 
   private void unlink(WorldAccess world, int id) {
-    links[idToColorId(id)] = false;
+    portalLinks[idToColorId(id)] = false;
 
     blockToBase(world, id);
-    blockToBase(world, getPair(id));
-  }
-
-  private static int getPair(int id) {
-    return id % 2 == 0 ? id + 1 : id - 1;
+    blockToBase(world, getPartnerId(id));
   }
 
   private static int idToColorId(int id) {

@@ -1,0 +1,546 @@
+@startuml
+class ColorPortals {
+  {static} + MODID:String
+
+  {static} + ACTIVATION_GUI_TEXTURE:Identifier
+  {static} + LINKING_GUI_TEXTURE:Identifier
+  {static} + LINKING_BUTTON_TEXTURE:Identifier
+
+  {static} + COLOR_PORTAL_BASE_ID:Identifier
+  {static} + COLOR_PORTAL_BLOCK_ID:Identifier
+
+  {static} + ACTIVATION_SCREEN_HANDLER_ID:Identifier
+  {static} + LINKING_SCREEN_HANDLER_ID:Identifier
+
+  {static} + DRAGON_EYE_ID;
+  {static} + ENDER_DRAGON_LOOT_TABLE_ID;
+
+  {static} + LINK_PACKET_CHANNEL_ID;
+
+  {static} + COLOR_PORTAL_BASE:Block
+  {static} + COLOR_PORTAL_BASE_ITEM:Item
+  {static} + COLOR_PORATL_BASE_ENTITY:BlockEntityType<ColorPortalBaseEntity>
+
+  {static} + COLOR_PORTAL_BLOCK:Block
+  {static} + COLOR_PORATL_BLOCK_ENTITY:BlockEntityType<ColorPortalBlockEntity>
+
+  {static} + COLOR_PORTAL_ACTIVATION_SCREEN_HANDLER:ScreenHandlerType<ColorPortalActivationScreenHandler>
+  {static} + COLOR_PORTAL_LINKING_SCREEN_HANDLER:ScreenHandlerType<ColorPortalLinkingScreenHandler>
+
+  {static} + DRAGON_EYE:Item
+
+  + portalRegistry:ColorPortalRegistry
+
+  onInitialize():void
+}
+
+class ColorPortalRegistry {
+  - portalList:ColorPortal[]
+  - portalLinks:Boolean[]
+  + getById(id:int):ColorPortal
+  + addPortal(portal:ColorPortal, world:World):int
+  + removePortal(world:WorldAccess, id:int):void
+  + linkPortal(world:World, pos:BlockPos):boolean
+  + getPartnerDimension(id:int):RegistryKey<World>
+  + getTeleportTarget(destination:ServerWorld, id:int, e:Entity):TeleportTarget
+  {static} - baseToBlock(world:World, pos:BlockPos):void
+  - blockToBase(world:WorldAccess, portal_id:int):void
+  {static} - getPartnerId(id:int):int
+  {static} + createFromNbt(tag:NbtCompound):ColorPortalRegistry
+  {static} + writeNbt(tag:NbtCompound):NbtCompound
+  - unlink(world:WorldAccess, id:int):void
+  {static} - idToColorId(id:int)int
+}
+
+class ColorPortal {
+  - id:int
+  - origin:BlockPos
+  - color:BaseColor
+  - age:long
+  - dimension:Identifier
+
+  {static} + createColorPortal(world:World, pos:BlockPos, color:BaseColor):boolean
+  {static} + getById(id:int):ColorPortal
+
+  + getPos():BasePos
+  + getColor():BaseColor
+  + getAge():long
+  + getDimension():RegistryKey<World>
+
+  + destroy(world:WorldAccess):void
+  {static} + getCost(id:int):int
+  - getDistCost(dist:double):double
+  - getDimCost():double
+  {static} - getEuclideanHorizontalDistance(a:BlockPos, b:BlockPos):double
+  {static} - getPortalBlocks(world:World, pos:BlockPos, direction:Direction):List<BlockPos>
+  + getTeleportSpawn(world:ServerWorld):Vec3d
+}
+
+
+enum BaseColor {
+  black
+  red
+  green
+  brown
+  blue
+  purple
+  cyan
+  light_gray
+  gray
+  pink
+  lime
+  yellow
+  light_blue
+  magenta
+  orange
+  white
+  {static} BY_ID:IntFunction<BaseColor>
+  {method} + getId():int
+  {method} {static} + byId(id:int):BaseColor
+  {method} + asString():String
+  {method} {static} + byDyeItem(item:DyeItem):BaseColor
+
+}
+
+class ColorPortalBlock {
+  {static} + AXIS:EnumProperty<Direction.Axis>
+  {static} # X_SHAPE:VoxelShape
+  {static} # Y_SHAPE:VoxelShape
+  {static} + COLOR:EnumProperty<BaseColor>
+
+  + getPickStack(world:BlockView, pos:BlockPos, state:BlockState):ItemStack
+  + getOutlineShape(state:BlockState, world:BlockView, pos:BlockPos, context:ShapeContext):VoxelShape
+  + getColoredStateWithRotation(axis:Direction.Axis, color:BaseColor):BlockState
+  + onStateReplaced(state:BlockState, world:World, pos:BlockPos, newState:BlockState, moved:boolean):void
+  + onEntityCollision(state:BlockState, world:World, pos:BlockPos, entity:Entity):void
+  + getStateForNeighborUpdate(state:BlockState, direction:Direction, neighborState:BlockState):BlockState
+  + createBlockEntity(pos:BlockPos, state:BlockState):BlockEntity
+  + getRenderType(state:BlockState):BlockRenderType
+  + rotate(state:BlockState, rotation:BlockRotation):BlockState
+  # appendProperties(builder:StateManager.Builder<Block, BlockState>):void
+}
+
+class ColorPortalBase {
+  {static} + AXIS:EnumProperty
+  {static} + COLOR:EnumProperty
+  {static} + setColor(world:World, pos:BlockPos, color:BaseColor):void
+  + onUse(state:BlockState, world:World, pos:BlockPos, player:PlayerEntity, hand:Hand, hit:BlockHitResult):ActionResult
+  + getPlacementState(ctx:ItemPlacementContext):BlockState
+  + createBlockEntity(pos:BlockPos, state:BlockState):BlockEntity
+  + getRenderType(state:BlockState):BlockRenderType
+  + rotate(state:BlockState, rotation:BlockRotation):BlockState
+  + mirror(state:BlockState, mirror:BlockMirror):BlockState
+  # appendProperties(builder:StateManager.Builder<Block, BlockState>):void
+}
+
+class ColorPortalBlockEntity {
+  - portal_id:int
+  - is_base:boolean
+  + setPortalId(portal_id:int):void
+  + getPortalId():int
+  + setBase():void
+  + isBase():boolean
+  + writeNbt(nbt:NbtCompound):void
+  + readNbt(nbt:NbtCompound):void
+}
+
+class ColorPortalBaseEntity {
+  - portal_id:int
+
+  + setPortalId(portal_id:int):void
+  + getPortalId():int
+  + createMenu(syncId:int, playerInventory:PlayerInventory, player:PlayerEntity):ScreenHandler
+  + getDisplayName():Text
+  + writeScreenOpeningData(player:ServerPlayerEntity, buf:PacketByteBuf):void
+  + writeNbt(nbt:NbtCompound):void
+  + readNbt(nbt:NbtCompound):void
+}
+
+class ClientColorPortals {
+  + onInitializeClient():void
+}
+
+class ColorPortalActivationScreenHandler {
+  - inv:Inventory
+  - slot:Slot
+  - context:ScreenHandlerContext
+  + close(player:PlayerEntity):void
+  + quickMove(player:PlayerEntity, slotIndex:int):ItemStack
+  + canUse(player:PlayerEntity):boolean
+}
+
+class ColorPortalLinkingScreenHandler {
+  - cost:int
+  - pos:GlobalPos
+  + context:ScreenHandlerContext
+
+  + getCost():int
+  + getPos():GlobalPos
+  + quickMove(player:PlayerEntity, slotIndex:int):ItemStack
+  + canUse(player:PlayerEntity):boolean
+}
+
+class ColorPortalActivationScreen {
+  # drawBackground(matrices:MatrixStack, delta:float, mouseX:int, mouseY:int):void
+  # init():void
+  + render(matrices:MatrixStack, mouseX:int, mouseY:int, delta:float):void
+}
+class ColorPortalLinkingScreen {
+  # drawBackground(matrices:MatrixStack, delta:float, mouseX:int, mouseY:int):void
+  # init():void
+  + render(matrices:MatrixStack, mouseX:int, mouseY:int, delta:float):void
+  # drawForeground(matrices:MatrixStack, mouseX:int, mouseY:int):void
+  - getTextX(text:String):int
+}
+
+package minecraft{
+  package fabric {
+    interface ModInitializer
+    interface ClientModInitializer
+    class FabricBlockSettings
+    class FabricBlockEntityTypeBuilder
+    class FabricItemSettings
+    class LootTableEvents
+    class ServerLifecycleEvents
+    class ServerPlayNetworking
+    class BlockRenderLayerMap
+  }
+  class PersistentState
+  class ScreenHandler
+  class HandledScreen<T extends ScreenHandler>
+  class BlockWithEntity
+  interface StringIdentifiable
+  class BlockEntity
+  interface ExtendedScreenHandlerFactory
+  class Identifier
+  class Block
+  class Item
+  class BlockEntityType<T extends BlockEntity>
+  class ScreenHandlerType<T extends ScreenHandler>
+  interface Registry
+  class Registries
+  class Material
+  class ExtendedScreenHandlerType<T extends ScreenHandler>
+  class EntityType
+  class LootPool
+  class "Builder" as LootPoolBuilder
+  LootPool +-- LootPoolBuilder
+  class ItemEntry
+  class ResourceManager
+  class LootManager
+  class LootTable
+  class "Builder" as LootTableBuilder
+  LootTable +-- LootTableBuilder
+  class LootTableSource
+  class MinecraftServer
+  class ServerPlayerEntity
+  class ServerPlayNetworkHandler
+  class PacketByteBuf
+  class PacketSender
+  class GlobalPos
+  class World
+  class BlockPos
+  class BlockItem
+  class WorldAccess
+  class Direction
+  class RegistryKey
+  class Entity
+  class Vec3d
+  class NbtCompound
+  class AxisDirection
+  class Axis
+  Direction +-- Axis
+  Direciton +-- AxisDirection
+  class TeleportTarget
+  class ServerWorld
+  class Properties
+  class AirBlock
+  class Blocks
+  class RegistryKeys
+  class DimensionTypes
+  class BlockState
+  class ScreenHandlerContext
+  class PlayerInventory
+  class PlayerEntity
+  class Slot
+  class ItemStack
+  class Inventory
+  class DyeItem
+  class MutableText
+  class Text
+  class Style
+  class Formatting
+  class TextColor
+  class HandledScreens
+  class RenderLayer
+  class MatrixStack
+  class RenderSystem
+  class ClientPlayNetworking
+  class TexturedButtonWidget
+  class ButtonWidget
+  class GameRenderer
+  class BlockRenderType
+  class BlockView
+  class EnumProperty
+  class VoxelShape
+  class BlockRotation
+  class StateManager
+  class "Builder" as StateManagerBuilder
+  StateManager +-- StateManagerBuilder
+  class ShapeContext
+  class NamedScreenHandlerFactory
+  class ActionResult
+  class BlockMirror
+  class Hand
+  class BlockHitResult
+  class DirectionProperty
+  class AbstractBlock
+  class "Settings" as AbstractBlockSettings
+  AbstractBlock +-- AbstractBlockSettings
+  class ItemPlacementContext
+  class SimpleInventory
+}
+
+ColorPortals ..|> ModInitializer
+ColorPortals --> "9" Identifier
+ColorPortals --> "2" Block
+ColorPortals --> "2" BlockEntityType
+ColorPortals --> "2" Item
+ColorPortals --> "2" ScreenHandlerType
+ColorPortals ..> Registry
+ColorPortals ..> Registries
+ColorPortals ..> Material
+ColorPortals ..> ExtendedScreenHandlerType
+ColorPortals ..> EntityType
+ColorPortals ..> LootPoolBuilder
+ColorPortals ..> ItemEntry
+ColorPortals ..> ResourceManager
+ColorPortals ..> LootManager
+ColorPortals ..> LootTableBuilder
+ColorPortals ..> LootTableSource
+ColorPortals ..> MinecraftServer
+ColorPortals ..> ServerPlayerEntity
+ColorPortals ..> ServerPlayNetworkHandler
+ColorPortals ..> PacketByteBuf
+ColorPortals ..> PacketSender
+ColorPortals ..> GlobalPos
+ColorPortals ..> World
+ColorPortals ..> BlockPos
+ColorPortals ..> FabricBlockSettings
+ColorPortals ..> FabricBlockEntityTypeBuilder
+ColorPortals ..> BlockItem
+ColorPortals ..> FabricItemSettings
+ColorPortals ..> LootTableEvents
+ColorPortals ..> ServerLifecycleEvents
+ColorPortals ..> ServerPlayNetworking
+ColorPortals --* "1" ColorPortalRegistry
+
+ColorPortalRegistry --* "32" ColorPortal
+ColorPortalRegistry ..> ColorPortal
+ColorPortalRegistry ..> WorldAccess
+ColorPortalRegistry ..> World
+ColorPortalRegistry ..> BlockPos
+ColorPortalRegistry ..> Direction
+ColorPortalRegistry ..> AxisDirection
+ColorPortalRegistry ..> ColorPortals
+ColorPortalRegistry ..> Axis
+ColorPortalRegistry ..> ColorPortalBlockEntity
+ColorPortalRegistry ..> ColorPortalBase
+ColorPortalRegistry ..> ColorPortalBaseEntity
+ColorPortalRegistry ..> BaseColor
+ColorPortalRegistry ..> Block
+ColorPortalRegistry ..> RegistryKey
+ColorPortalRegistry ..> TeleportTarget
+ColorPortalRegistry ..> ServerWorld
+ColorPortalRegistry ..> Properties
+ColorPortalRegistry ..> Entity
+ColorPortalRegistry ..> Vec3d
+ColorPortalRegistry ..> NbtCompound
+ColorPortalRegistry ..> BlockState
+
+ColorPortal --> "1" BlockPos
+ColorPortal --> "1" BaseColor
+ColorPortal --> "1" Identifier
+ColorPortal ..> World
+ColorPortal ..> BlockEntity
+ColorPortal ..> ColorPortalBaseEntity
+ColorPortal ..> ColorPortals
+ColorPortal ..> Direction
+ColorPortal ..> ColorPortalBase
+ColorPortal ..> Axis
+ColorPortal ..> ColorPortalBlockEntity
+ColorPortal ..> ColorPortalBaseEntity
+ColorPortal ..> RegistryKey
+ColorPortal ..> RegistryKeys
+ColorPortal ..> WorldAccess
+ColorPortal ..> ColorPortalBase
+ColorPortal ..> DimensionTypes
+ColorPortal ..> AirBlock
+ColorPortal ..> Blocks
+ColorPortal ..> NbtCompound
+ColorPortal ..> Vec3d
+ColorPortal ..> ServerWorld
+ColorPortal ..> BlockState
+
+ColorPortalLinkingScreenHandler --|> ScreenHandler
+ColorPortalLinkingScreenHandler --> GlobalPos
+ColorPortalLinkingScreenHandler --> ScreenHandlerContext
+ColorPortalLinkingScreenHandler ..> PlayerInventory
+ColorPortalLinkingScreenHandler ..> PacketByteBuf
+ColorPortalLinkingScreenHandler ..> World
+ColorPortalLinkingScreenHandler ..> ColorPortals
+ColorPortalLinkingScreenHandler ..> BlockPos
+ColorPortalLinkingScreenHandler ..> Slot
+ColorPortalLinkingScreenHandler ..> ItemStack
+ColorPortalLinkingScreenHandler ..> PlayerEntity
+
+ColorPortalActivationScreenHandler --|> ScreenHandler
+ColorPortalActivationScreenHandler --> Inventory
+ColorPortalActivationScreenHandler --> Slot
+ColorPortalActivationScreenHandler --> ScreenHandlerContext
+ColorPortalActivationScreenHandler ..> PlayerInventory
+ColorPortalActivationScreenHandler ..> ColorPortals
+ColorPortalActivationScreenHandler ..> ItemStack
+ColorPortalActivationScreenHandler ..> DyeItem
+ColorPortalActivationScreenHandler ..> PlayerEntity
+ColorPortalActivationScreenHandler ..> ColorPortal
+ColorPortalActivationScreenHandler ..> BaseColor
+ColorPortalActivationScreenHandler ..> MutableText
+ColorPortalActivationScreenHandler ..> Text
+ColorPortalActivationScreenHandler ..> Style
+ColorPortalActivationScreenHandler ..> TextColor
+ColorPortalActivationScreenHandler ..> Formatting
+
+ClientColorPortals ..|> ClientModInitializer
+ClientColorPortals ..> HandledScreens
+ClientColorPortals ..> ColorPortalActivationScreen
+ClientColorPortals ..> ColorPortalLinkingScreen
+ClientColorPortals ..> BlockRenderLayerMap
+ClientColorPortals ..> ColorPortals
+ClientColorPortals ..> RenderLayer
+
+ColorPortalLinkingScreen --|> HandledScreen
+ColorPortalLinkingScreen ..> ColorPortalLinkingScreenHandler
+ColorPortalLinkingScreen ..> PlayerInventory
+ColorPortalLinkingScreen ..> Text
+ColorPortalLinkingScreen ..> MatrixStack
+ColorPortalLinkingScreen ..> RenderSystem
+ColorPortalLinkingScreen ..> ColorPortals
+ColorPortalLinkingScreen ..> GameRenderer
+ColorPortalLinkingScreen ..> TexturedButtonWidget
+ColorPortalLinkingScreen ..> ButtonWidget
+ColorPortalLinkingScreen ..> PacketByteBuf
+ColorPortalLinkingScreen ..> GlobalPos
+ColorPortalLinkingScreen ..> ClientPlayNetworking
+
+ColorPortalActivationScreen --|> HandledScreen
+ColorPortalActivationScreen ..> ColorPortalActivationScreenHandler
+ColorPortalActivationScreen ..> PlayerInventory
+ColorPortalActivationScreen ..> Text
+ColorPortalActivationScreen ..> MatrixStack
+ColorPortalActivationScreen ..> RenderSystem
+ColorPortalActivationScreen ..> ColorPortals
+ColorPortalActivationScreen ..> GameRenderer
+ColorPortalActivationScreen ..> Slot
+
+ColorPortalBlock --|> BlockWithEntity
+ColorPortalBlock --> EnumProperty
+ColorPortalBlock --> VoxelShape
+ColorPortalBlock ..> Axis
+ColorPortalBlock ..> Properties
+ColorPortalBlock ..> Block
+ColorPortalBlock ..> BaseColor
+ColorPortalBlock ..> BlockRenderType
+ColorPortalBlock ..> BlockState
+ColorPortalBlock ..> BlockView
+ColorPortalBlock ..> BlockPos
+ColorPortalBlock ..> ShapeContext
+ColorPortalBlock ..> ItemStack
+ColorPortalBlock ..> BlockRotation
+ColorPortalBlock ..> StateManagerBuilder
+ColorPortalBlock ..> BlockEntity
+ColorPortalBlock ..> ColorPortalBlockEntity
+ColorPortalBlock ..> WorldAccess
+ColorPortalBlock ..> Direction
+ColorPortalBlock ..> ColorPortal
+ColorPortalBlock ..> Blocks
+ColorPortalBlock ..> ColorPortals
+ColorPortalBlock ..> ColorPortalBase
+ColorPortalBlock ..> AxisDirection
+ColorPortalBlock ..> Entity
+
+ColorPortalBase --|> BlockWithEntity
+ColorPortalBase --> EnumProperty
+ColorPortalBase --> DirectionProperty
+ColorPortalBase ..> Properties
+ColorPortalBase ..> BaseColor
+ColorPortalBase ..> AbstractBlockSettings
+ColorPortalBase ..> Direction
+ColorPortalBase ..> Block
+ColorPortalBase ..> BlockRenderType
+ColorPortalBase ..> BlockState
+ColorPortalBase ..> BlockEntity
+ColorPortalBase ..> PlayerEntity
+ColorPortalBase ..> ItemPlacementContext
+ColorPortalBase ..> NamedScreenHandlerFactory
+ColorPortalBase ..> StateManager
+ColorPortalBase ..> ActionResult
+ColorPortalBase ..> BlockMirror
+ColorPortalBase ..> BlockRotation
+ColorPortalBase ..> Hand
+ColorPortalBase ..> BlockHitResult
+ColorPortalBase ..> BlockPos
+ColorPortalBase ..> World
+ColorPortalBase ..> ColorPortalBaseEntity
+
+ColorPortalBaseEntity ..|> ExtendedScreenHandlerFactory
+ColorPortalBaseEntity --|> BlockEntity
+ColorPortalBaseEntity ..> BlockState
+ColorPortalBaseEntity ..> BlockEntity
+ColorPortalBaseEntity ..> PlayerEntity
+ColorPortalBaseEntity ..> PlayerInventory
+ColorPortalBaseEntity ..> SimpleInventory
+ColorPortalBaseEntity ..> NbtCompound
+ColorPortalBaseEntity ..> PacketByteBuf
+ColorPortalBaseEntity ..> ScreenHandler
+ColorPortalBaseEntity ..> ScreenHandlerContext
+ColorPortalBaseEntity ..> ServerPlayerEntity
+ColorPortalBaseEntity ..> Text
+ColorPortalBaseEntity ..> BlockPos
+ColorPortalBaseEntity ..> GlobalPos
+ColorPortalBaseEntity ..> ColorPortal
+ColorPortalBaseEntity ..> ColorPortals
+ColorPortalBaseEntity ..> ColorPortalBase
+ColorPortalBaseEntity ..> ColorPortalActivationScreenHandler
+ColorPortalBaseEntity ..> ColorPortalLinkingScreenHandler
+
+ColorPortalBlockEntity --|> BlockEntity
+ColorPortalBlockEntity ..> BlockState
+ColorPortalBlockEntity ..> BlockEntity
+ColorPortalBlockEntity ..> NbtCompound
+ColorPortalBlockEntity ..> BlockPos
+ColorPortalBlockEntity ..> ColorPortals
+
+BaseColor ..|> StringIdentifiable
+BaseColor ..> DyeItem
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ColorPortalRegistry --|> PersistentState
+
+@enduml

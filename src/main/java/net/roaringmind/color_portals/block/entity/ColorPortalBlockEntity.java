@@ -14,11 +14,11 @@ public class ColorPortalBlockEntity extends BlockEntity {
     super(ColorPortals.COLOR_PORTAL_BLOCK_ENTITY, pos, state);
   }
 
-  public void setPortal(int portal) {
+  public void setPortalId(int portal) {
     this.portal_id = portal;
   }
 
-  public int getPortal() {
+  public int getPortalId() {
     return portal_id;
   }
 

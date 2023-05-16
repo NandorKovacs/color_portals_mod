@@ -44,11 +44,11 @@ public class ColorPortalBaseEntity extends BlockEntity implements ExtendedScreen
     return Text.translatable(getCachedState().getBlock().getTranslationKey());
   }
 
-  public void setPortal(int portal) {
+  public void setPortalId(int portal) {
     this.portal_id = portal;
   }
 
-  public int getPortal() {
+  public int getPortalId() {
     return portal_id;
   }
 

@@ -58,9 +58,9 @@ public class ColorPortal {
       world.setBlockState(block_pos,
           ColorPortals.COLOR_PORTAL_BLOCK
               .getColoredStateWithRotation(base_direction.getAxis() == Axis.X ? Axis.Z : Axis.X, color));
-      ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortal(portal.getId());
+      ((ColorPortalBlockEntity) world.getBlockEntity(block_pos)).setPortalId(portal.getId());
     }
-    ((ColorPortalBaseEntity) e).setPortal(portal.getId());
+    ((ColorPortalBaseEntity) e).setPortalId(portal.getId());
     return true;
   }
 
@@ -155,7 +155,7 @@ public class ColorPortal {
 
     int x = 0;
     int y = 0;
-    visited[x + 12][x + 12] = true;
+    visited[x + 12][x + 12] = true; 
 
     int[][] neighbors = {
         { x - 1, y },

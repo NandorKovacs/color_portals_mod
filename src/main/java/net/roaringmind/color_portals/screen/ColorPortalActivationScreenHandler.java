@@ -93,7 +93,7 @@ public class ColorPortalActivationScreenHandler extends ScreenHandler {
   }
 
   @Override
-  public ItemStack quickMove(PlayerEntity var1, int var2) {
+  public ItemStack quickMove(PlayerEntity player, int slotIndex) {
     return ItemStack.EMPTY;
   }
 
@@ -102,7 +102,7 @@ public class ColorPortalActivationScreenHandler extends ScreenHandler {
   }
 
   @Override
-  public boolean canUse(PlayerEntity var1) {
+  public boolean canUse(PlayerEntity player) {
     return true;
   }
 

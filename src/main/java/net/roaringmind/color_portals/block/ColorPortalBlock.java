@@ -94,7 +94,7 @@ public class ColorPortalBlock extends BlockWithEntity {
       return state;
     }
 
-    ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
+    ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortalId());
     if (portal != null) {
       portal.destroy(world);
     }
@@ -104,7 +104,7 @@ public class ColorPortalBlock extends BlockWithEntity {
 
   @Override
   public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-    ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
+    ColorPortal portal = ColorPortal.getById(((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortalId());
     if (portal != null) {
       portal.destroy(world);
     }
@@ -118,9 +118,9 @@ public class ColorPortalBlock extends BlockWithEntity {
   @Override
   public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
     if (world.getBlockEntity(pos) instanceof ColorPortalBlockEntity
-        && ((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal() != -1) {
+        && ((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortalId() != -1) {
 
-      ((EntityPortalInterface) entity).setInColorPortal(pos, ((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortal());
+      ((EntityPortalInterface) entity).setInColorPortal(pos, ((ColorPortalBlockEntity) world.getBlockEntity(pos)).getPortalId());
     }
   }
 }
